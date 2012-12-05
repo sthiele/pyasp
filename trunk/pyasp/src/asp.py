@@ -1,19 +1,19 @@
 # Copyright (c) 2012, Sven Thiele <sthiele78@gmail.com>
 #
-# This file is part of BioASP.
+# This file is part of pyasp.
 #
-# BioASP is free software: you can redistribute it and/or modify
+# pyasp is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# BioASP is distributed in the hope that it will be useful,
+# pyasp is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with BioASP.  If not, see <http://www.gnu.org/licenses/>.import random
+# along with pyasp.  If not, see <http://www.gnu.org/licenses/>.import random
 
 # -*- coding: utf-8 -*-
 import re
@@ -21,9 +21,9 @@ import tempfile
 import os
 import subprocess
 import threading
-from bioasp.misc import *
-import bioasp.ply.lex as lex
-import bioasp.ply.yacc as yacc
+from pyasp.misc import *
+import pyasp.ply.lex as lex
+import pyasp.ply.yacc as yacc
 
 global optimize
 # use 0 for debugging
