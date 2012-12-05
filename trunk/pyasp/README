@@ -1,7 +1,7 @@
-BioASP is distributed under the GNU Public Licence, see file COPYING for
+PyASP is distributed under the GNU Public Licence, see file COPYING for
 details.
 
 Installation 
 -------------
 
-pip install --user bioasp
+pip install pyasp
