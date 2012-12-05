@@ -1,19 +1,19 @@
 # Copyright (c) 2012, Sven Thiele <sthiele78@gmail.com>
 #
-# This file is part of BioASP.
+# This file is part of pyasp.
 #
-# BioASP is free software: you can redistribute it and/or modify
+# pyasp is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# BioASP is distributed in the hope that it will be useful,
+# pyasp is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with BioASP.  If not, see <http://www.gnu.org/licenses/>.import random
+# along with pyasp.  If not, see <http://www.gnu.org/licenses/>.import random
 
 # -*- coding: utf-8 -*-
 #from distutils.core import setup
@@ -53,17 +53,17 @@ class install(_install):
         _install.run(self)
         
         if '--user' in sys.argv[-1] :
-            userdir = site.getusersitepackages()+"/bioasp/bin" 
+            userdir = site.getusersitepackages()+"/pyasp/bin" 
             self.get_binaries(userdir)
             cmd="chmod +x "+userdir+"/*"
             print cmd
             os.system(cmd)
         else :
             py_version = "%s.%s" % (sys.version_info[0], sys.version_info[1])
-            path1 = sys.prefix+"/lib/python%s/dist-packages/bioasp/bin" % py_version
-            path2 = sys.prefix+"/lib/python%s/site-packages/bioasp/bin" % py_version
-            path3 = sys.prefix+"/local/lib/python%s/dist-packages/bioasp/bin" % py_version
-            path4 = sys.prefix+"/local/lib/python%s/site-packages/bioasp/bin" % py_version
+            path1 = sys.prefix+"/lib/python%s/dist-packages/pyasp/bin" % py_version
+            path2 = sys.prefix+"/lib/python%s/site-packages/pyasp/bin" % py_version
+            path3 = sys.prefix+"/local/lib/python%s/dist-packages/pyasp/bin" % py_version
+            path4 = sys.prefix+"/local/lib/python%s/site-packages/pyasp/bin" % py_version
 
             cmd = None
             if os.path.exists(path1):
@@ -79,7 +79,7 @@ class install(_install):
                 self.get_binaries(path4)
                 cmd = "chmod +x "+path4+"/*"
             else:
-                print "BioASP binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using BioASP."
+                print "pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp."
             
             if cmd:
                 print cmd
@@ -87,21 +87,23 @@ class install(_install):
                 
 setup(
     cmdclass={'install': install},
-    name = 'bioasp',
-    version = '0.13dev',
-    url='http://pypi.python.org/pypi/bioasp/',
+    name = 'pyasp',
+    version = '1.0dev',
+    url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
+    description='A convenience wrapper for the ASP tool gringo, clasp, claspD',
+    long_description=open('README').read(),
     author='Sven Thiele',
     author_email='sthiele78@gmail.com', 
     
-    package_dir = { 'bioasp' : 'src'},
+    package_dir = { 'pyasp' : 'src'},
     package_data = {
-        'bioasp' : ['query/*/*.gringo','query/*/*.lp','bin/*.txt']
+        'pyasp' : ['query/*/*.gringo','query/*/*.lp','bin/*.txt']
     },
     packages = [
-        'bioasp', 
-        'bioasp.data', 
-        'bioasp.ply',
-        'bioasp.query',
+        'pyasp', 
+        'pyasp.data', 
+        'pyasp.ply',
+        'pyasp.query',
     ]
 )

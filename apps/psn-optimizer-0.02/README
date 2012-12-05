@@ -1,5 +1,0 @@
-requires:
-  bioasp-0.11
-
-usage:
-  python psn-optimizer.py data/LiverPKNDREAM.sif data/Dataset1.csv
