@@ -1,0 +1,91 @@
+%% THIS ENCODING ONLY WORKS CORRECTLY FOR A SINGLE EXPERIMENT
+:- exp(A),exp(B),A!=B.
+exp(P) :- obs_vlabel(P,V,S).
+exp("empty") :- 0{obs_vlabel(P,V,S)}0.
+
+% obss_elabel fixes problems with contradictory influences
+obss_elabel(U,V, 1)  :- obs_elabel(U,V, 1),  not obs_elabel(U,V, -1).
+obss_elabel(U,V, -1) :- obs_elabel(U,V, -1), not obs_elabel(U,V, 1).
+obs_vlabel(U,S) :- obs_vlabel(E,U,S).
+input(V) :- input(E,V).
+active(E,V) :- active(V), exp(E).
+
+% The following code constitutes the core part of diagnosis via MICs.
+%%%%%%%%%%%%%%%%%
+% Preprocessing %
+%%%%%%%%%%%%%%%%%
+
+sign(-1;1).
+
+diff(V,V)  :- edge(V,V), obss_elabel(V,V,-1), not obss_elabel(V,V, 1).
+diff(U,V)  :- edge(U,V), obss_elabel(U,V,-1), not obss_elabel(U,V, 1), obs_vlabel(U,S), obs_vlabel(V,S).
+diff(U,V)  :- edge(U,V), obss_elabel(U,V, 1), not obss_elabel(U,V,-1), obs_vlabel(U,S), obs_vlabel(V,T), S != T.
+
+trivial(V) :- vertex(V), not input(V), diff(U,V) : edge(U,V).
+
+reach(U,V) :- edge(U,V), not input(V), not trivial(V).
+reach(V,U) :- edge(U,V), not input(V), not trivial(V),                        not obs_vlabel(U,S) : sign(S).
+reach(U,W) :- edge(U,V), not input(V), not trivial(V), reach(V,W), vertex(W).
+reach(V,W) :- edge(U,V), not input(V), not trivial(V), reach(U,W), vertex(W), not obs_vlabel(U,S) : sign(S).
+
+
+%%%%%%%%%%%%%
+% Generator %
+%%%%%%%%%%%%%
+
+singleton | nonsingleton.
+active(V) : trivial(V)  :-    singleton.
+active(V) | inactive(V) :- nonsingleton, vertex(V), not trivial(V), not input(V).
+
+:- active(V;W), not trivial(V;W), not reach(V,W).
+:- active(V),   not trivial(V),   not obs_vlabel(V,S) : sign(S), not active(W) : edge(V,W).
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Inconsistency Test %
+%%%%%%%%%%%%%%%%%%%%%%
+
+vlabel(V,1)   | vlabel(V,-1)   :- active(V),   not trivial(V),               not obs_vlabel(V,T)   : sign(T).
+vlabel(U,1)   | vlabel(U,-1)   :- active(V),   not trivial(V), edge(U,V),    not obs_vlabel(U,T)   : sign(T).
+llabel(U,V,1) | llabel(U,V,-1) :- active(V),   not trivial(V), edge(U,V),    not obss_elabel(U,V,T) : sign(T).
+
+vlabel(V,S)   :- vertex(V), obs_vlabel(V,S),   not trivial(V), not input(V).
+vlabel(U,S)   :- edge(U,V), obs_vlabel(U,S),   not trivial(V), not input(V).
+llabel(U,V,S) :- edge(U,V), obss_elabel(U,V,S), not trivial(V), not input(V).
+
+oppo(U,V)     :- llabel(U,V,-1), vlabel(U,S),  not trivial(V), not input(V), not obss_elabel(U,V, 1), vlabel(V,S).
+oppo(U,V)     :- llabel(U,V, 1), vlabel(U,S),  not trivial(V), not input(V), not obss_elabel(U,V,-1), vlabel(V,T), S != T.
+
+bot           :- singleton.
+bot           :- active(V),                    not trivial(V), oppo(U,V) : edge(U,V).
+vlabel(V,S)   :- bot, vertex(V), sign(S),      not trivial(V), not input(V), not obs_vlabel(V,T)   : sign(T).
+vlabel(U,S)   :- bot, edge(U,V), sign(S),      not trivial(V), not input(V), not obs_vlabel(U,T)   : sign(T).
+llabel(U,V,S) :- bot, edge(U,V), sign(S),      not trivial(V), not input(V), not obss_elabel(U,V,T) : sign(T).
+
+:- not bot.
+
+
+%%%%%%%%%%%%%%%%%%%
+% Minimality Test %
+%%%%%%%%%%%%%%%%%%%
+
+mvlabel(W,V,1)   | mvlabel(W,V,-1)   :-             active(V;W), not trivial(V;W), reach(V,W), reach(W,V), W != V.
+mvlabel(W,U,1)   | mvlabel(W,U,-1)   :- edge(U,V),  active(V;W), not trivial(V;W), reach(V,W), reach(W,V), W != V.
+mllabel(W,U,V,1) | mllabel(W,U,V,-1) :- edge(U,V),  active(V;W), not trivial(V;W), reach(V,W), reach(W,V), W != V.
+
+mvlabel(W,V,S)   :- obs_vlabel(V,S),                reach(V,W), reach(W,V), not trivial(V;W), not input(V;W), W != V.
+mvlabel(W,U,S)   :- obs_vlabel(U,S),    edge(U,V),  reach(V,W), reach(W,V), not trivial(V;W), not input(V;W), W != V.
+mllabel(W,U,V,S) :- obss_elabel(U,V,S),  edge(U,V),  reach(V,W), reach(W,V), not trivial(V;W), not input(V;W), W != V.
+
+minfl(W,V, 1)    :- mvlabel(W,U,S), mllabel(W,U,V,S), W != V.
+minfl(W,V,-1)    :- mvlabel(W,U,S), mllabel(W,U,V,T), W != V, S != T.
+
+:- active(V;W), reach(V,W), reach(W,V), W != V, mvlabel(W,V,S), not minfl(W,V,S).
+
+
+%%%%%%%%%%
+% Output %
+%%%%%%%%%%
+
+#hide.
+#show active(E,V).

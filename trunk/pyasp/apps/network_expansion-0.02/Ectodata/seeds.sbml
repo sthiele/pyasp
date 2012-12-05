@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+  <model id="EsiCyc">
+    <listOfCompartments>
+      <compartment id="CCO__45__EXTRACELLULAR"/>
+      <compartment id="CCO__45__CYTOSOL"/>
+      <compartment id="CCO__45__OUT"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="Acceptor" compartment="CCO__45__CYTOSOL"/>
+      <species id="ACP" compartment="CCO__45__CYTOSOL"/>
+      <species id="ADP" compartment="CCO__45__CYTOSOL"/>
+      <species id="AMMONIA" compartment="CCO__45__CYTOSOL"/>
+      <species id="AMP" compartment="CCO__45__CYTOSOL"/>
+      <species id="ATP" compartment="CCO__45__CYTOSOL"/>
+      <species id="BIOTIN" compartment="CCO__45__CYTOSOL"/>
+      <species id="CA__43__2" compartment="CCO__45__CYTOSOL"/>
+      <species id="CARBON__45__DIOXIDE" compartment="CCO__45__CYTOSOL"/>
+      <species id="CDP__45__12921" compartment="CCO__45__CYTOSOL"/>
+      <species id="CL__45__" compartment="CCO__45__CYTOSOL"/>
+      <species id="CO__45__A" compartment="CCO__45__CYTOSOL"/>
+      <species id="CPD0__45__1695" compartment="CCO__45__CYTOSOL"/>
+      <species id="CPD0__45__2394" compartment="CCO__45__CYTOSOL"/>
+      <species id="CPD__45__3" compartment="CCO__45__CYTOSOL"/>
+      <species id="CPD__45__315" compartment="CCO__45__CYTOSOL"/>
+      <species id="CU__43__" compartment="CCO__45__CYTOSOL"/>
+      <species id="CU__43__2" compartment="CCO__45__CYTOSOL"/>
+      <species id="Donor__45__H2" compartment="CCO__45__CYTOSOL"/>
+      <species id="EDTA" compartment="CCO__45__CYTOSOL"/>
+      <species id="FRU" compartment="CCO__45__CYTOSOL"/>
+      <species id="GDP" compartment="CCO__45__CYTOSOL"/>
+      <species id="GTP" compartment="CCO__45__CYTOSOL"/>
+      <species id="HYDROGEN__45__PEROXIDE" compartment="CCO__45__CYTOSOL"/>
+      <species id="K__43__" compartment="CCO__45__CYTOSOL"/>
+      <species id="MG__43__2" compartment="CCO__45__CYTOSOL"/>
+      <species id="NA__43__" compartment="CCO__45__CYTOSOL"/>
+      <species id="NAD__45__P__45__OR__45__NOP" compartment="CCO__45__CYTOSOL"/>
+      <species id="NAD" compartment="CCO__45__CYTOSOL"/>
+      <species id="NADH__45__P__45__OR__45__NOP" compartment="CCO__45__CYTOSOL"/>
+      <species id="NADH" compartment="CCO__45__CYTOSOL"/>
+      <species id="NADP" compartment="CCO__45__CYTOSOL"/>
+      <species id="NADPH" compartment="CCO__45__CYTOSOL"/>
+      <species id="NITRATE" compartment="CCO__45__CYTOSOL"/>
+      <species id="OXYGEN__45__MOLECULE" compartment="CCO__45__CYTOSOL"/>
+      <species id="Pi" compartment="CCO__45__CYTOSOL"/>
+      <species id="PPI" compartment="CCO__45__CYTOSOL"/>
+      <species id="PROTON" compartment="CCO__45__CYTOSOL"/>
+      <species id="SULFATE" compartment="CCO__45__CYTOSOL"/>
+      <species id="THIAMINE" compartment="CCO__45__CYTOSOL"/>
+      <species id="UDP" compartment="CCO__45__CYTOSOL"/>
+      <species id="Vitamins__45__B12" compartment="CCO__45__CYTOSOL"/>
+      <species id="WATER" compartment="CCO__45__CYTOSOL"/>
+      <species id="ZN__43__2" compartment="CCO__45__CYTOSOL"/>
+    </listOfSpecies>
+  </model>
+</sbml>

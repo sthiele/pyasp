@@ -1,0 +1,19 @@
+% Provide candidate repair (for cardinality or subset minimization)
+% available repair methods: repair_a, repair_e,repair_g,repair_i,repair_v
+
+input(P,V) :- exp(P), input(V).
+exp(P) :- obs_vlabel(P,V,S).
+
+% auxiliary definitions
+sign(-1;1).
+complement(S,-S) :- sign(S).
+
+% construct candidate repair
+pos(aedge(U,V))   :- repair_a, vertex(U;V), U != V, not edge(U,V), exp(P), not input(P,V).
+pos(eflip(U,V,S)) :- repair_e, edge(U,V), obs_elabel(U,V,S), not obs_elabel(U,V,T), complement(S,T), exp(P), not input(P,V).
+pos(ivert(V))     :- repair_g, exp(P), vertex(V), not input(P,V).
+pos(ivert(P,V))   :- repair_i, exp(P), vertex(V), not input(P,V).
+pos(vflip(P,V,S)) :- repair_v, exp(P), vertex(V), obs_vlabel(P,V,S).
+
+#hide.
+#show pos/1.
