@@ -98,12 +98,10 @@ setup(
     
     package_dir = { 'pyasp' : 'src'},
     package_data = {
-        'pyasp' : ['query/*/*.gringo','query/*/*.lp','bin/*.txt']
+        'pyasp' : ['bin/*.txt']
     },
     packages = [
         'pyasp', 
-        'pyasp.data', 
-        'pyasp.ply',
-        'pyasp.query',
+        'pyasp.ply'
     ]
 )
