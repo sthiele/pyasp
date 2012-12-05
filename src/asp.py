@@ -25,6 +25,10 @@ from pyasp.misc import *
 import pyasp.ply.lex as lex
 import pyasp.ply.yacc as yacc
 
+
+root = __file__.rsplit('/', 1)[0]
+
+
 global optimize
 # use 0 for debugging
 # use 1 for speed (run python once without -O or -OO and then with -O or -OO)
