@@ -1,0 +1,5 @@
+requires:
+  bioasp-0.11
+
+usage:
+  python network_expansion.py data/Esicyc.sbml data/metaCyc.sbml  data/seeds.sbml  data/targets.sbml

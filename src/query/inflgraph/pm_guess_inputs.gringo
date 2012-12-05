@@ -1,0 +1,4 @@
+input(V) :- vertex(V), not edge(U,V) : edge(U,V) : U != V.
+input(V) :- vertex(V), edge(V,V), obs_elabel(V,V,1).
+#hide.
+#show input(V).

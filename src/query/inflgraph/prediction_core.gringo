@@ -1,0 +1,76 @@
+% Provide candidate repair (for cardinality or subset minimization)
+%   - For available repair options, see repair_config.gringo
+
+input(P,V) :- exp(P), input(V).
+exp(P) :- obs_vlabel(P,V,S).
+exp("empty") :- 0{obs_vlabel(P,V,S)}0.
+
+% auxiliary definitions
+sign(-1;1).
+complement(S,-S) :- sign(S).
+
+{ repair(R) : pos(R) }.
+:- repair(ivert(V)), repair(ivert(P,V)).
+
+% here comes the choice rules
+%vlabel(P,V,S) :- not vlabel(P,V,T),        complement(S,T),   exp(P), vertex(V).
+%1{vlabel(P,V,1), vlabel(P,V,-1)}1 :- exp(P), vertex(V), not input(P,V).
+%1{vlabel(P,U,1), vlabel(P,U,-1)}1 :- exp(P), edge(U,V), not input(P,V).
+1{vlabel(P,V,1), vlabel(P,V,-1)}1 :- exp(P), vertex(V).
+1{vlabel(P,U,1), vlabel(P,U,-1)}1 :- exp(P), edge(U,V).
+
+elabel(U,V,S) :-          edge(U,V), not elabel(U,V,T), complement(S,T).
+elabel(U,V,S) :- repair(aedge(U,V)), not elabel(U,V,T), complement(S,T).
+%1{elabel(U,V,1), elabel(U,V,-1)}1 :- exp(P), edge(U,V), not input(P,V).
+
+% construct consistent total labeling
+elabel(U,V,S) :- not repair(eflip(U,V,S)), obs_elabel(U,V,S),       edge(U,V).
+elabel(U,V,T) :-     repair(eflip(U,V,S)),                    complement(S,T).
+
+vlabel(P,V,S) :- not repair(vflip(P,V,S)), obs_vlabel(P,V,S), exp(P), vertex(V).
+vlabel(P,V,T) :-     repair(vflip(P,V,S)), obs_vlabel(P,V,S), complement(S,T).
+
+
+infl(P,V,S*T) :- elabel(U,V,S), vlabel(P,U,T).
+
+:- vlabel(P,gen(V),S), not infl(P,gen(V),S), not input(P,gen(V)), not repair(ivert(P,gen(V))), not repair(ivert(gen(V))).
+:- vlabel(P,gen(V),S),     infl(P,gen(V),S),                          repair(ivert(P,gen(V))).
+
+:- vlabel(P,and(V),1),      infl(P,and(V),-1), not input(P,and(V)), not repair(ivert(P,and(V))), not repair(ivert(and(V))).
+:- vlabel(P,and(V),-1), not infl(P,and(V),-1), not input(P,and(V)), not repair(ivert(P,and(V))), not repair(ivert(and(V))).
+:- vlabel(P,and(V),1),      infl(P,and(V),1),                           repair(ivert(P,and(V))).
+:- vlabel(P,and(V),-1),     infl(P,and(V),-1),                          repair(ivert(P,and(V))).
+
+:- vlabel(P,or(V),1),   not infl(P,or(V),1),   not input(P,or(V)),  not repair(ivert(P,or(V))),  not repair(ivert(or(V))).
+:- vlabel(P,or(V),-1),      infl(P,or(V),1),   not input(P,or(V)),  not repair(ivert(P,or(V))),  not repair(ivert(or(V))).
+:- vlabel(P,or(V),1),       infl(P,or(V),1),                            repair(ivert(P,or(V))).
+:- vlabel(P,or(V),-1),  not infl(P,or(V),1),                            repair(ivert(P,or(V))).
+
+
+infl(P,strong_inhibitor(V1,V2),V1,S*T) :- elabel(V1,strong_inhibitor(V1,V2),S),vlabel(P,V1,T).
+infl(P,strong_inhibitor(V1,V2),V2,S*T) :- elabel(V2,strong_inhibitor(V1,V2),S),vlabel(P,V2,T).
+
+:- vlabel(P,strong_inhibitor(V1,V2),1), infl(P,strong_inhibitor(V1,V2),V2,1),  not input(P,strong_inhibitor(V1,V2)),
+   not repair(ivert(P,strong_inhibitor(V1,V2))), not repair(ivert(strong_inhibitor(V1,V2))).
+:- vlabel(P,strong_inhibitor(V1,V2),1), not infl(P,strong_inhibitor(V1,V2),V1,1),   not input(P,strong_inhibitor(V1,V2)),
+   not repair(ivert(P,strong_inhibitor(V1,V2))), not repair(ivert(strong_inhibitor(V1,V2))).
+vlabel(P,strong_inhibitor(V1,V2),1):- infl(P,strong_inhibitor(V1,V2),V1,1), infl(P,strong_inhibitor(V1,V2),V2,-1), vertex(P,strong_inhibitor(V1,V2)), exp(P).
+
+:- vlabel(P,strong_inhibitor(V1,V2),1), infl(P,strong_inhibitor(V1,V2),V1,1), infl(P,strong_inhibitor(V1,V2),V2,-1), repair(ivert(P,strong_inhibitor(V1,V2))).
+:- vlabel(P,strong_inhibitor(V1,V2),-1), infl(P,strong_inhibitor(V1,V2),V1,-1), repair(ivert(P,strong_inhibitor(V1,V2))).
+:- vlabel(P,strong_inhibitor(V1,V2),-1), infl(P,strong_inhibitor(V1,V2),V2, 1), repair(ivert(P,strong_inhibitor(V1,V2))).
+
+
+infl(P,opposite_sign(V),V,S*T) :- elabel(V2,opposite_sign(V),S), vlabel(P,V,T).
+
+vlabel(P,opposite_sign(V),-1) :- infl(P,opposite_sign(V),V,1), vertex(opposite_sign(V)), exp(P).
+vlabel(P,opposite_sign(V),1) :- infl(P,opposite_sign(V),V,-1), vertex(opposite_sign(V)), exp(P).
+
+:-vlabel(P,opposite_sign(V),-1),infl(P,opposite_sign(V),V,1), repair(ivert(P,opposite_sign(V))).
+:-vlabel(P,opposite_sign(V),1),infl(P,opposite_sign(V),V,-1), repair(ivert(P,opposite_sign(V))).
+ 
+
+% output projection
+#hide.
+#show elabel/3.
+#show vlabel/3.

@@ -1,0 +1,53 @@
+% The following code constitutes the core of prediction under inconsistency.
+
+converse(1,-1).
+converse(-1,1).
+
+ivertex(V) :- vertex(V), not input(V).
+ivertex(U) :- edge(U,V), not input(V).
+iedge(U,V) :- edge(U,V), not input(V).
+
+elabel(U,V,1) | elabel(U,V,-1) :- iedge(U,V).
+elabel(U,V,S)                  :- iedge(U,V), obs_elabel(U,V,S).
+
+keep(V) | flip(V) :- ivertex(V), obs_vlabel(E,V,S).
+
+vlabel(E,V,1) | vlabel(E,V,-1)   :- ivertex(V), exp(E).
+vlabel(E,V,S) :- obs_vlabel(E,V,S), ivertex(V), keep(V).
+vlabel(E,V,T) :- obs_vlabel(E,V,S), ivertex(V), flip(V), converse(S,T).
+
+infl(E,V,1)  :- elabel(U,V,S), vlabel(E,U,S).
+infl(E,V,-1) :- elabel(U,V,S), vlabel(E,U,T), converse(S,T).
+
+:- vlabel(E,V,S), not infl(E,V,S), not input(V).
+
+
+% The next rule can be used instead of the one below 
+% to do prediction also for consistent labelings.
+
+% bot    | add(V) :  ivertex(V): obs_vlabel(E,V,S).
+add(V)          :  ivertex(V): obs_vlabel(E,V,S).
+add(V) | nop(V) :- ivertex(V), obs_vlabel(E,V,S).
+
+:- add(V), keep(V).
+
+mvlabel(E,V,1) | mvlabel(E,V,-1)  :- ivertex(V), exp(E).
+mvlabel(E,V,S) :- obs_vlabel(E,V,S), ivertex(V), keep(V).
+mvlabel(E,V,S) :- obs_vlabel(E,V,S), ivertex(V), flip(V), add(V).
+mvlabel(E,V,T) :- obs_vlabel(E,V,S), ivertex(V), flip(V), nop(V), converse(S,T).
+
+oppo(E,U,V) :- elabel(U,V,1),  mvlabel(E,U,S), mvlabel(E,V,T), converse(S,T).
+oppo(E,U,V) :- elabel(U,V,-1), mvlabel(E,U,S), mvlabel(E,V,S).
+
+bot :- ivertex(V), oppo(E,U,V) : iedge(U,V), not input(V).
+
+add(V)        :- bot, flip(V).
+nop(V)        :- bot, flip(V).
+mvlabel(E,V,1)  :- bot, ivertex(V), exp(E).
+mvlabel(E,V,-1) :- bot, ivertex(V), exp(E).
+
+:- not bot.
+
+#hide.
+#show flip/1.
+

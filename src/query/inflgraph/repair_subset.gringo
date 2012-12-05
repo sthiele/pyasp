@@ -1,0 +1,40 @@
+% Check subset-minimality of candidate repair (obtained from repair_core.gringo)
+
+% guess repairs to drop
+drop(R) | keep(R) :-     repair(R).
+          keep(R) :- not repair(R),  pos(R).
+              bot :-       keep(R) : pos(R).
+
+% check for consistent total labeling w.r.t. dropped/kept repairs
+elabell(U,V,S) : sign(S) :- edge(U,V),      sign(T),            not obs_elabel(U,V,T).
+% elabell(U,V,S) : sign(S) :- keep(aedge(U,V)).
+% elabell(U,V,S) : sign(S) :- repair(aedge(U,V)).
+elabell(U,V,S) : sign(S) :-                 keep(aedge(U,V)),   repair(aedge(U,V)).
+elabell(U,V,T) :-     repair(eflip(U,V,S)), keep(eflip(U,V,S)), complement(S,T).
+elabell(U,V,S) :-                           drop(eflip(U,V,S)).
+elabell(U,V,S) :- not repair(eflip(U,V,S)), obs_elabel(U,V,S),  complement(S,T), edge(U,V), not obs_elabel(U,V,T).
+
+vlabell(P,V,S) : sign(S) :- exp(P), vertex(V).
+vlabell(P,V,T) :-     repair(vflip(P,V,S)), keep(vflip(P,V,S)), complement(S,T).
+vlabell(P,V,S) :-                           drop(vflip(P,V,S)).
+vlabell(P,V,S) :- not repair(vflip(P,V,S)), obs_vlabel(P,V,S),  exp(P), vertex(V).
+
+oppo(P,U,V) :- edge(U,V),        elabell(U,V,S), vlabell(P,U,T), vlabell(P,V,R), S*T != R, not input(P,V).
+% oppo(P,U,V) :- keep(aedge(U,V)), elabell(U,V,S), vlabell(P,U,T), vlabell(P,V,R), S*T != R, not input(P,V).
+% oppo(P,U,V) :- repair(aedge(U,V)), elabell(U,V,S), vlabell(P,U,T), vlabell(P,V,R), S*T != R, not input(P,V).
+oppo(P,U,V) :- keep(aedge(U,V)), elabell(U,V,S), vlabell(P,U,T), vlabell(P,V,R), S*T != R, not input(P,V), repair(aedge(U,V)).
+oppo(P,U,V) :- drop(aedge(U,V)), exp(P), not input(P,V).
+oppo(P,U,V) :- pos(aedge(U,V)),  not repair(aedge(U,V)), exp(P), not input(P,V).
+        bot :- exp(P), oppo(P,U,V) : edge(U,V), oppo(P,U,V) : pos(aedge(U,V)), drop(ivert(P,V)).
+        bot :- exp(P), oppo(P,U,V) : edge(U,V), oppo(P,U,V) : pos(aedge(U,V)), drop(ivert(V)), not input(P,V).
+        bot :- exp(P), oppo(P,U,V) : edge(U,V), oppo(P,U,V) : pos(aedge(U,V)), not repair(ivert(P,V)), not repair(ivert(V)), vertex(V), not input(P,V).
+
+% derive everything from bot
+drop(R)        :- bot, pos(R).
+keep(R)        :- bot, pos(R).
+elabell(U,V,S) :- bot, pos(aedge(U,V)),   sign(S).
+elabell(U,V,S) :- bot,         edge(U,V), sign(S), sign(T), not obs_elabel(U,V,T).
+vlabell(P,V,S) :- bot, exp(P), vertex(V), sign(S).
+
+% exclude existence of smaller repairs
+ :- not bot.

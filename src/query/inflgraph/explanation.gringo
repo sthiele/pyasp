@@ -1,0 +1,36 @@
+input(P,V) :- input(V), exp(P).
+
+converse(1,-1).
+converse(-1,1).
+sign(1).
+sign(-1).
+
+1 { vlabel(E,V,1), vlabel(E,V,0), vlabel(E,V,-1) } 1 :- vertex(V), exp(E).
+
+% unless stated otherwise, a regulation has a unique sign
+1 { elabel(U,V,1), elabel(U,V,0), elabel(U,V,-1) } 1 :- edge(U,V), not obs_elabel(U,V,1),
+                                                                   not obs_elabel(U,V,-1).
+
+vlabel(E,V,S) :- vertex(V), obs_vlabel(E,V,S).
+elabel(U,V,S) :- edge(U,V), obs_elabel(U,V,S).
+
+infl(E,V, 1)  :- elabel(U,V,S), vlabel(E,U,S), sign (S).
+infl(E,V,-1)  :- elabel(U,V,S), vlabel(E,U,T), converse(S,T).
+
+:- vlabel(E,V,1), not infl(E,V,1), not input(V), exp(E), vertex(V).
+:- vlabel(E,V,-1), not infl(E,V,-1), not input(V), exp(E), vertex(V).
+vlabel(E,V,0) :- not infl(E,V,1),  not infl(E,V,-1), not input(V), exp(E), vertex(V).
+
+%infer the experiment name from the observations
+exp(E) :- obs_vlabel(E,V,S).
+
+%helper for input predicate
+input(V) :- input(E,V).
+
+#hide.
+#show vlabel/3.
+
+% minimize explaination via new input nodes
+%#minimize { vlabel(E,V,S) : input(V): exp(E): sign(S) }.
+% maximize the nodes which are not involved
+#maximize [ not false= 0, vlabel(E,V,0) : vertex(V): exp(E) ].

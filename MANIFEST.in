@@ -1,0 +1,3 @@
+include src/query/*/*.lp
+include src/query/*/*.gringo
+include src/bin/*.txt

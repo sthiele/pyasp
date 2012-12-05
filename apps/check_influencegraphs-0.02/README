@@ -1,0 +1,5 @@
+requires:
+  bioasp-0.06
+
+usage:
+  python check_inflgraph.py data/yeast_guelzim.net data/yeast_snf2.obs

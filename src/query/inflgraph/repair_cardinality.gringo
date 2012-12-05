@@ -1,0 +1,3 @@
+% Cardinality-minimize repairs (obtained from repair_core.gringo)
+
+#minimize [ not false = 0, repair(R) : pos(R)].
