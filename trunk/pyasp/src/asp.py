@@ -423,6 +423,93 @@ class GringoClasp(GringoClaspBase):
         self._gringo = None
         return accu
 
+    def run_print(self, programs, printer, nmodels = 1, additionalProgramText=None):
+        assert(programs.__class__ == list)
+        collapseTerms=False
+        collapseAtoms=False
+        # options need to be filtered to work with Popen
+        # since gringo/clasp doesn't like whitespace before numbers parameter
+        try:
+            additionalPrograms = []
+            if additionalProgramText != None:
+              (fd, fn) = tempfile.mkstemp('.lp')
+              file = os.fdopen(fd,'w')
+              file.write(str(additionalProgramText))
+              file.close()
+              additionalPrograms.append(fn)
+              
+            addoptions = []
+            if self.gringo_options != None and self.gringo_options != '':
+              addoptions = self.gringo_options.split()
+              assert(addoptions.__class__ == list)
+
+            commandline = filter_empty_str([self.gringo_bin, '-l'] + addoptions + programs + additionalPrograms)
+            #debug(commandline)
+            self._gringo = subprocess.Popen(
+              commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            #print 'gringo', self.gringo_options.split() + programs
+        except OSError, e:
+            if e.errno == 2:
+                raise Exception('Grounder \'%s\' not found' % self.gringo_bin)
+            else: raise
+        try:
+            addoptions = []
+            if self.clasp_options != None and self.clasp_options != '':
+              addoptions = self.clasp_options.split()
+              assert(addoptions.__class__ == list)
+
+            self._clasp = subprocess.Popen(
+                filter_empty_str([self.clasp_bin] + addoptions + [str(nmodels)]),
+                stdin=self._gringo.stdout,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE)
+            #print self.clasp_options.split() + [str(nmodels)]
+        except OSError, e:
+            if e.errno == 2:
+                raise Exception('Solver \'%s\' not found' % self.clasp_bin)
+            else: raise
+        accu = []
+        l = self._clasp.stdout.readline()
+        #f = self._clasp.stderr.readline()
+        #print f,'f'
+        parser = Parser(collapseTerms=collapseTerms,collapseAtoms=collapseAtoms)
+        count=1
+        while l != '':
+
+            if l.startswith('Answer'):
+	        count += 1
+                l = self._clasp.stdout.readline()
+                #print count,":",parser.parse(l)
+                printer.write(count, parser.parse(l))
+                
+            if l.startswith('Models'):
+                # statistics start here
+                break
+            l = self._clasp.stdout.readline()
+
+        # error handling (we can only do it here as gringo may not be finished until here)
+
+        # first clasp
+        (claspout,self.clasp_stderr) = self._clasp.communicate()
+        # unfortunately the clasp stats appear on stdout and not on stderr, so we have to pfusch here
+        self.clasp_stderr = claspout + self.clasp_stderr
+        if self._clasp.returncode not in self.clasp_noerror_retval:
+          # make sure gringo is dead
+          self._gringo.kill()
+          self._gringo.wait()
+          self.gringo_stderr = self._gringo.stderr.read()
+          raise Exception("got error %d from clasp: '%s' gringo: '%s'" % \
+            (self._clasp.returncode, self.clasp_stderr, self.gringo_stderr))
+
+        # if clasp terminated successfully, then gringo also terminated
+        (gringoout,self.gringo_stderr) = self._gringo.communicate()
+        if self._gringo.returncode not in self.gringo_noerror_retval:
+          raise Exception("got error %d from gringo: '%s'" % \
+            (self._gringo.returncode, self.gringo_stderr))
+
+        self._clasp = None
+        self._gringo = None
+        return count
 
 class GringoUnClasp(GringoClaspBase):
     def __init__(self, *args, **keywords):
