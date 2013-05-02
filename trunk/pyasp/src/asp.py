@@ -337,7 +337,7 @@ class GringoClasp(GringoClaspBase):
               addoptions = self.gringo_options.split()
               assert(addoptions.__class__ == list)
 
-            commandline = filter_empty_str([self.gringo_bin, '-l'] + addoptions + programs + additionalPrograms)
+            commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             #debug(commandline)
             self._gringo = subprocess.Popen(
               commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -443,7 +443,7 @@ class GringoClasp(GringoClaspBase):
               addoptions = self.gringo_options.split()
               assert(addoptions.__class__ == list)
 
-            commandline = filter_empty_str([self.gringo_bin, '-l'] + addoptions + programs + additionalPrograms)
+            commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             #debug(commandline)
             self._gringo = subprocess.Popen(
               commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -535,7 +535,7 @@ class GringoUnClasp(GringoClaspBase):
               addoptions = self.gringo_options.split()
               assert(addoptions.__class__ == list)
 
-            commandline = filter_empty_str([self.gringo_bin, '-l'] + addoptions + programs + additionalPrograms)
+            commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             #debug(commandline)
             self._gringo = subprocess.Popen(
               commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -664,7 +664,7 @@ class GringoClaspOpt(GringoClaspBase):
           additionalPrograms.append(fn)
           
         self._gringo = subprocess.Popen(
-            filter_empty_str([self.gringo_bin, '-l'] +
+            filter_empty_str([self.gringo_bin] +
               self.gringo_options.split() + programs + additionalPrograms),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
@@ -793,7 +793,7 @@ class GringoClaspDistr(GringoClaspBase):
         # options need to be filtered to work with Popen
         # since gringo/clasp doesn't like whitespace before numbers parameter
         self._gringo = subprocess.Popen(
-            filter_empty_str([self.gringo_bin, '-l'] + self.gringo_options.split() + programs),
+            filter_empty_str([self.gringo_bin] + self.gringo_options.split() + programs),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         self._clasp = subprocess.Popen(
