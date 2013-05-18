@@ -4,4 +4,6 @@ details.
 Installation 
 -------------
 
-pip install pyasp
+You can install precursor by running::
+
+	$ pip install --user pyasp
