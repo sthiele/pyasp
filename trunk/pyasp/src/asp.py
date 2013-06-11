@@ -273,7 +273,7 @@ class GringoClaspBase:
         self._gringo = None
         self.clasp_stderr = None
         self.gringo_stderr = None
-        self.clasp_noerror_retval = set([10, 20])
+        self.clasp_noerror_retval = set([10, 20, 30])
         self.gringo_noerror_retval = set([0])
 
     def getClaspStderr(self):
