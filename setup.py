@@ -39,18 +39,18 @@ class install(_install):
                 
             CLASP_URL = BASE_URL + "macos/clasp"
             CLASPD_URL = BASE_URL + "macos/claspD"
-            UNCLASP_URL = BASE_URL + "macos/unclasp"
+            HLASP_URL = BASE_URL + "macos/hclasp"
             GRINGO_URL = BASE_URL + "macos/gringo"
         else:                       
             CLASP_URL = BASE_URL + "linux-%s/clasp" % architecture
             CLASPD_URL = BASE_URL + "linux-%s/claspD" % architecture
-            UNCLASP_URL = BASE_URL + "linux-%s/unclasp" % architecture
+            HCLASP_URL = BASE_URL + "linux-%s/hclasp" % architecture
             GRINGO_URL = BASE_URL + "linux-%s/gringo" % architecture
             
         
         urllib.urlretrieve(CLASP_URL, path + "/clasp")
         urllib.urlretrieve(CLASPD_URL, path + "/claspD")
-        urllib.urlretrieve(UNCLASP_URL, path + "/unclasp")
+        urllib.urlretrieve(HCLASP_URL, path + "/hclasp")
         urllib.urlretrieve(GRINGO_URL, path + "/gringo")
         
     def run(self):

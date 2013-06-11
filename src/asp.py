@@ -511,10 +511,10 @@ class GringoClasp(GringoClaspBase):
         self._gringo = None
         return count
 
-class GringoUnClasp(GringoClaspBase):
+class GringoHClasp(GringoClaspBase):
     def __init__(self, *args, **keywords):
         GringoClaspBase.__init__(self, *args, **keywords)
-        self.clasp_bin = root + '/bin/unclasp'
+        self.clasp_bin = root + '/bin/hclasp'
         self.clasp_noerror_retval = set([0,10,20])
 
     def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None):
