@@ -64,30 +64,25 @@ class install(_install):
             os.system(cmd)
         else :
             py_version = "%s.%s" % (sys.version_info[0], sys.version_info[1])
-            path1 = sys.prefix+"/lib/python%s/dist-packages/pyasp/bin" % py_version
-            path2 = sys.prefix+"/lib/python%s/site-packages/pyasp/bin" % py_version
-            path3 = sys.prefix+"/local/lib/python%s/dist-packages/pyasp/bin" % py_version
-            path4 = sys.prefix+"/local/lib/python%s/site-packages/pyasp/bin" % py_version
+            paths = []
+            paths.append(sys.prefix+"/lib/python%s/dist-packages/pyasp/bin" % py_version)
+            paths.append(sys.prefix+"/lib/python%s/site-packages/pyasp/bin" % py_version)
+            paths.append(sys.prefix+"/local/lib/python%s/dist-packages/pyasp/bin" % py_version)
+            paths.append(sys.prefix+"/local/lib/python%s/site-packages/pyasp/bin" % py_version)
+            paths.append("/Library/Python/%s/site-packages/pyasp/bin" % py_version)
 
             cmd = None
-            if os.path.exists(path1):
-                self.get_binaries(path1)
-                cmd = "chmod +x "+path1+"/*"
-            elif os.path.exists(path2):
-                self.get_binaries(path2)
-                cmd = "chmod +x "+path2+"/*"
-            elif os.path.exists(path3):
-                self.get_binaries(path3)
-                cmd = "chmod +x "+path3+"/*"
-            elif os.path.exists(path4):
-                self.get_binaries(path4)
-                cmd = "chmod +x "+path4+"/*"
-            else:
-                print "pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp."
-            
+            for path in paths:
+                if os.path.exists(path):
+                    self.get_binaries(path)
+                    cmd = "chmod +x "+path+"/*"
+                    break
+                
             if cmd:
                 print cmd
                 os.system(cmd)
+            else:
+                print "pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp."
                 
 setup(
     cmdclass={'install': install},
