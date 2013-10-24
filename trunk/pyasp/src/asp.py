@@ -138,7 +138,7 @@ class Lexer:
 class Parser:
   start = 'answerset'
 
-  def __init__(self,collapseTerms=True,collapseAtoms=False):
+  def __init__(self,collapseTerms=True,collapseAtoms=False, callback=None):
     '''
     collapseTerms: function terms in predicate arguments are collapsed into strings
     collapseAtoms: atoms (predicate plus terms) are collapsed into strings
@@ -156,6 +156,8 @@ class Parser:
     self.tokens = self.lexer.tokens
     self.collapseTerms = collapseTerms
     self.collapseAtoms = collapseAtoms
+    self.callback = callback
+
     if collapseAtoms and not collapseTerms:
       raise "if atoms are collapsed, functions must also be collapsed!"
     #self.parser = yacc.yacc(module=self, optimize=optimize, tabmodule='asp_py_parsetab', debugfile="asp_py_parser.dbg")
@@ -222,6 +224,10 @@ class Parser:
     line = line.strip()
     if len(line) > 0:
       self.parser.parse(line, lexer=self.lexer.lexer)
+    
+    if self.callback:
+        self.callback(self.accu)
+        
     return self.accu
 
 def filter_empty_str(l):
@@ -319,7 +325,7 @@ class GringoClasp(GringoClaspBase):
     def __init__(self, *args, **keywords):
         GringoClaspBase.__init__(self, *args, **keywords)
 
-    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None):
+    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         assert(programs.__class__ == list)
         # options need to be filtered to work with Popen
         # since gringo/clasp doesn't like whitespace before numbers parameter
@@ -367,7 +373,7 @@ class GringoClasp(GringoClaspBase):
         #f = self._clasp.stderr.readline()
         #print f,'f'
         # take only last set of cautious consequences
-        parser = Parser(collapseTerms=collapseTerms,collapseAtoms=collapseAtoms)
+        parser = Parser(collapseTerms=collapseTerms,collapseAtoms=collapseAtoms, callback=callback)
         if '--enum-mode cautious' in self.clasp_options:
             lastline = None
             while l[:-1] != '':
