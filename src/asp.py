@@ -24,7 +24,7 @@ import threading
 from pyasp.misc import *
 import pyasp.ply.lex as lex
 import pyasp.ply.yacc as yacc
-
+import errno
 
 root = __file__.rsplit('/', 1)[0]
 
@@ -379,7 +379,15 @@ class GringoClasp(GringoClaspBase):
             while l[:-1] != '':
                 if l.startswith('Cautious consequences'):
                     lastline = self._clasp.stdout.readline()
-                l = self._clasp.stdout.readline()
+                x=True    
+                while x:    
+                  x= False
+		  try: 
+		    l = self._clasp.stdout.readline()  
+		  except IOError, e:
+		    if e.errno != errno.EINTR: raise
+		    else: x = True    
+
             if lastline != None:
               #print >>sys.stderr, "parsing cautious consequences %s" % (lastline,)
               accu.append(parser.parse(lastline))
@@ -403,7 +411,14 @@ class GringoClasp(GringoClaspBase):
                 if l.startswith('Models'):
                     # statistics start here
                     break
-                l = self._clasp.stdout.readline()
+                x=True
+                while x:    
+                  x= False
+		  try: 
+		    l = self._clasp.stdout.readline() 
+		  except IOError, e:
+		    if e.errno != errno.EINTR: raise
+		    else: x = True
 
         # error handling (we can only do it here as gringo may not be finished until here)
 
@@ -588,7 +603,14 @@ class GringoHClasp(GringoClaspBase):
                     lastweightline.strip() + "(not an optimization problem?)")
             if l.startswith('UNSATISFIABLE'):
                 return None
-            l = self._clasp.stdout.readline()
+            x=True    
+            while x:    
+              x= False
+	      try: 
+		l = self._clasp.stdout.readline()  
+	      except IOError, e:
+		if e.errno != errno.EINTR: raise
+		else: x = True              
        
         # error handling (we can only do it here as gringo may not be finished until here)
 
