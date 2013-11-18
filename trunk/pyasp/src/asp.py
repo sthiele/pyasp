@@ -661,7 +661,148 @@ class GringoClaspD(GringoClasp):
         self.clasp_bin = root + '/bin/claspD'
         self.clasp_noerror_retval = set([0])
 
+class GringoHClaspOpt(GringoClaspBase):
+    def __init__(self, *args, **keywords):
+        GringoClaspBase.__init__(self, *args, **keywords)
+        self.clasp_bin = root + '/bin/hclasp'
 
+    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None):
+        '''
+        allows for the following modes of optimization:
+        nmodels=0: get all optimal models
+        nmodels=1: get first optimal model (-n 0)
+        nmodels>1: get first K optimal models
+                   (this enumerates all optimal models using --opt-all)
+        (in both cases non-optimal models are discarded)
+
+        returns tuple:
+        (quality-tuple, list of optimal models)
+
+        the default setting returns the first optimal model
+        '''
+        # options need to be filtered to work with Popen
+        # since gringo/clasp doesn't like whitespace before numbers parameter
+        additionalPrograms = []
+        if additionalProgramText != None:
+          (fd, fn) = tempfile.mkstemp('.lp')
+          file = os.fdopen(fd,'w')
+          file.write(str(additionalProgramText))
+          file.close()
+          additionalPrograms.append(fn)
+          
+        self._gringo = subprocess.Popen(
+            filter_empty_str([self.gringo_bin] +
+              self.gringo_options.split() + programs + additionalPrograms),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        # get ground program
+        (groundout,self.gringo_stderr) = self._gringo.communicate()
+        if self._gringo.returncode not in self.gringo_noerror_retval:
+          raise RuntimeError("gringo terminated with %d and error %s" %
+            (self._gringo.returncode, self.gringo_stderr))
+        #
+        # now we first do clasp -n 0 to get weights of the optimal model
+        # (for getting all models, we can later initialize the solver with this
+        # weight and use --opt-all)
+        self._clasp = subprocess.Popen(
+            filter_empty_str([self.clasp_bin, '-n', '0'] +
+              self.clasp_options.split()),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        # send ground program to clasp and signal end of input
+        self._clasp.stdin.write(groundout)
+        self._clasp.stdin.close()
+        # get resulting answer sets, ignore everything to last (optimal) model
+        lastweightline = None
+        lastmodelline = None
+        l = self._clasp.stdout.readline()
+        while l != '' and l[:13] != 'OPTIMUM FOUND':
+            #debug(l.strip())
+            if l.startswith('Answer'):
+                # get model
+                lastmodelline = self._clasp.stdout.readline()
+                #debug(lastmodelline.strip())
+                # get weights
+                lastweightline = self._clasp.stdout.readline()
+                #debug(lastweightline.strip())
+                if lastweightline[:12] != 'Optimization':
+                  # not an optimization problem!
+                  raise RuntimeError("expected 'Optimization' line, got '%s' " %
+                    lastweightline.strip() + "(not an optimization problem?)")
+            if l.startswith('UNSATISFIABLE'):
+                return None
+            l = self._clasp.stdout.readline()
+
+        # clasp execution error handling
+        self._clasp.wait()
+        self.clasp_stderr = self._clasp.stderr.read()
+        if self._clasp.returncode not in self.clasp_noerror_retval:
+          raise Exception("got error %d from clasp: '%s' gringo: '%s'" % \
+            (self._clasp.returncode, self.clasp_stderr, self.gringo_stderr))
+
+        # received content error handling
+        if lastweightline == None or lastmodelline == None:
+          claspstdout = self._clasp.stdout.read()
+          self.clasp_stderr = self._clasp.stderr.read()
+          raise RuntimeError("did not find optimum! stdout='%s' stderr='%s'" %
+            (claspstdout, self.clasp_stderr))
+        # interpret weight of optimal model
+        optimal_weights = lastweightline[13:].split()
+        optimal_weights = tuple(map(int,optimal_weights))
+        #print >>sys.stderr, "optimal weights %s" % (optimal_weights,)
+        #
+        # we know the optimal weight -> get optimal model(s) next
+        #
+        parser = Parser(collapseTerms=collapseTerms,collapseAtoms=collapseAtoms)
+        # if we only need 1 model, parse and return it
+        if nmodels == 1:
+          #print >>sys.stderr, "parsing %s" % (lastmodelline,)
+          model = parser.parse(lastmodelline)
+          return (optimal_weights, [model])
+        # we need more models -> call solver again with preset opt value
+        # --opt-val=<optimal_weights> and --opt-all and -n <nmodels>
+        # -> we get a maximum of <nmodels> models and they are all optimal
+        optarg = '--opt-all=' + ','.join(map(str,optimal_weights))
+        args = filter_empty_str([self.clasp_bin, '-n', str(nmodels),
+          optarg] + self.clasp_options.split())
+        #print >>sys.stderr, "calling clasp again with %s" % (args,)
+        self._clasp = subprocess.Popen(args, stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # send ground program to clasp and signal end of input
+        self._clasp.stdin.write(groundout)
+        self._clasp.stdin.close()
+        # parse and return all resulting answer sets
+        accu = []
+        l = self._clasp.stdout.readline()
+        while l != '':
+            #print >>sys.stderr, "DBG got line '%s'" % (l,)
+            if l.startswith('Answer'):
+                # get model
+                modelline = self._clasp.stdout.readline()
+                # get weights
+                weightline = self._clasp.stdout.readline()
+                assert(weightline == lastweightline)
+                #print >>sys.stderr, "parsing modelline %s" % (modelline,)
+                model = parser.parse(modelline)
+                # build result
+                accu.append(model)
+            if l.startswith('Models'):
+                # statistics start here
+                break
+            l = self._clasp.stdout.readline()
+
+        # clasp execution error handling
+        self._clasp.wait()
+        # unfortunately the clasp stats appear on stdout and not on stderr, so we have to pfusch here
+        self.clasp_stderr = self._clasp.stdout.read()
+        self.clasp_stderr += self._clasp.stderr.read()
+        if self._clasp.returncode not in self.clasp_noerror_retval:
+          raise Exception("got error %d from clasp: '%s'" % (self._clasp.returncode, self.clasp_stderr))
+
+        self._clasp = None
+        self._gringo = None
+        return (optimal_weights, accu)
 
 class GringoClaspOpt(GringoClaspBase):
     def __init__(self, *args, **keywords):
