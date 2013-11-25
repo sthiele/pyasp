@@ -40,17 +40,20 @@ class install(_install):
             CLASP_URL = BASE_URL + "macos/clasp"
             CLASPD_URL = BASE_URL + "macos/claspD"
             HCLASP_URL = BASE_URL + "macos/hclasp"
+            UNCLASP_URL = BASE_URL + "macos/unclasp"         
             GRINGO_URL = BASE_URL + "macos/gringo"
         else:                       
             CLASP_URL = BASE_URL + "linux-%s/clasp" % architecture
             CLASPD_URL = BASE_URL + "linux-%s/claspD" % architecture
             HCLASP_URL = BASE_URL + "linux-%s/hclasp" % architecture
+            UNCLASP_URL = BASE_URL + "linux-%s/unclasp" % architecture
             GRINGO_URL = BASE_URL + "linux-%s/gringo" % architecture
             
         
         urllib.urlretrieve(CLASP_URL, path + "/clasp")
         urllib.urlretrieve(CLASPD_URL, path + "/claspD")
         urllib.urlretrieve(HCLASP_URL, path + "/hclasp")
+        urllib.urlretrieve(UNCLASP_URL, path + "/unclasp")        
         urllib.urlretrieve(GRINGO_URL, path + "/gringo")
         
     def run(self):
@@ -87,7 +90,7 @@ class install(_install):
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.1.8dev',
+    version = '1.1.9dev',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, clasp, claspD, hclasp.',
