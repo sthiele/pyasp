@@ -748,7 +748,7 @@ class GringoHClasp(GringoClaspBase):
     def __init__(self, *args, **keywords):
         GringoClaspBase.__init__(self, *args, **keywords)
         self.clasp_bin = root + '/bin/hclasp'
-        self.clasp_noerror_retval = set([0,10,20])
+        self.clasp_noerror_retval = set([0,10,20,30])
 
     def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None):
         assert(programs.__class__ == list)
