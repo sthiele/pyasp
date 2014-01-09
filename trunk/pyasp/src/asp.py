@@ -865,6 +865,76 @@ class GringoHClasp(GringoClaspBase):
         # if we only need 1 model, parse and return it
         model = parser.parse(lastmodelline)
         return (optimal_weights, [model])
+
+class GringoHClasp2(GringoClaspBase):
+    def __init__(self, *args, **keywords):
+        GringoClaspBase.__init__(self, *args, **keywords)
+        self.clasp_bin = root + '/bin/hclasp'
+        self.clasp_noerror_retval = set([0,10,20,30])
+
+    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+        import json
+        try:
+            additionalPrograms = []
+            if additionalProgramText != None:
+                (fd, fn) = tempfile.mkstemp('.lp')
+                file = os.fdopen(fd,'w')
+                file.write(str(additionalProgramText))
+                file.close()
+                additionalPrograms.append(fn)
+              
+            addoptions = []
+            if self.gringo_options != None and self.gringo_options != '':
+                addoptions = self.gringo_options.split()
+
+            commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
+            self._gringo = subprocess.Popen(commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        except OSError, e:
+            if e.errno == 2:
+                raise Exception('Grounder \'%s\' not found' % self.gringo_bin)
+            else: raise
+        try:
+            addoptions = []
+            if self.clasp_options != None and self.clasp_options != '':
+                addoptions = self.clasp_options.split()
+
+            self._clasp = subprocess.Popen(
+                filter_empty_str([self.clasp_bin] + addoptions + [str(nmodels)] + ['--outf=2']),
+                stdin=self._gringo.stdout,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE)
+        except OSError, e:
+            if e.errno == 2:
+                raise Exception('Solver \'%s\' not found' % self.clasp_bin)
+            else: raise
+        
+        accu = []
+        parser = Parser(collapseTerms=collapseTerms,collapseAtoms=collapseAtoms, callback=callback)
+        res = json.load(self._clasp.stdout)
+        
+        if res['Result'] == "SATISFIABLE":
+            for answer in res['Witnesses']:
+                atoms = filter(lambda atom: not atom.startswith('_'), answer['Value'])
+                accu.append(parser.parse(" ".join(atoms)))
+
+        (claspout,self.clasp_stderr) = self._clasp.communicate()
+        self.clasp_stderr = claspout + self.clasp_stderr
+        if self._clasp.returncode==20: return None
+        if self._clasp.returncode not in self.clasp_noerror_retval:
+            self._gringo.kill()
+            self._gringo.wait()
+            self.gringo_stderr = self._gringo.stderr.read()
+            raise Exception("got error %d from clasp: '%s' gringo: '%s'" % \
+                (self._clasp.returncode, self.clasp_stderr, self.gringo_stderr))
+
+        (gringoout,self.gringo_stderr) = self._gringo.communicate()
+        if self._gringo.returncode not in self.gringo_noerror_retval:
+            raise Exception("got error %d from gringo: '%s'" % \
+                (self._gringo.returncode, self.gringo_stderr))
+
+        self._clasp = None
+        self._gringo = None
+        return accu
         
       
 class GringoClaspD(GringoClasp):
