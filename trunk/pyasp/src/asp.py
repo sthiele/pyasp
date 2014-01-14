@@ -443,9 +443,12 @@ class GringoHClasp(GringoClaspBase):
         accu = []
         for answer in witnesses:
             atoms = filter(lambda atom: not atom.startswith('_'), answer[key])
-            accu.append(parser.parse(" ".join(atoms)))
-            
+            ts = parser.parse(" ".join(atoms))
+            if answer.has_key('Opt'):
+                ts.score = answer['Opt']
+            accu.append(ts)
         return accu
+                   
         
 class GringoHClaspOpt(GringoHClasp):
     def __init__(self, clasp_bin = root + '/bin/hclasp', clasp_options = '',
