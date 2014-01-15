@@ -47,14 +47,14 @@ class install(_install):
             CLASPD_URL = BASE_URL + "linux-%s/claspD-2.0" % architecture
             HCLASP_URL = BASE_URL + "linux-%s/hclasp" % architecture
             UNCLASP_URL = BASE_URL + "linux-%s/unclasp" % architecture
-            GRINGO_URL = BASE_URL + "linux-%s/gringo" % architecture
+            GRINGO_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
             
         
         urllib.urlretrieve(CLASP_URL, path + "/clasp")
         urllib.urlretrieve(CLASPD_URL, path + "/claspD")
         urllib.urlretrieve(HCLASP_URL, path + "/hclasp")
         urllib.urlretrieve(UNCLASP_URL, path + "/unclasp")        
-        urllib.urlretrieve(GRINGO_URL, path + "/gringo-3.0.5")
+        urllib.urlretrieve(GRINGO_URL, path + "/gringo")
         
     def run(self):
         _install.run(self)
