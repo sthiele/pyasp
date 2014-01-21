@@ -489,13 +489,17 @@ class GringoUnClasp(GringoClaspBase):
 
         lines = solving.split('\n')
         parser = Parser(collapseTerms,collapseAtoms,callback)
+        accu = []
         if "OPTIMUM FOUND" in lines:
 	    #print 'sat',lines[-9]
             optimum = parser.parse(lines[-9])
             optimum.score = tuple(map(int, lines[-8][13:].split()))
             accu = [optimum]
-        else:
-            accu = []
+        if "SATISFIABLE" in lines:
+	    #print 'sat',lines[-10]
+            optimum = parser.parse(lines[-10])
+            optimum.score = tuple(map(int, lines[-9][13:].split()))
+            accu = [optimum]
 
         return accu
 
