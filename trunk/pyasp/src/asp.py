@@ -500,6 +500,11 @@ class GringoUnClasp(GringoClaspBase):
             optimum = parser.parse(lines[-10])
             optimum.score = tuple(map(int, lines[-9][13:].split()))
             accu = [optimum]
+        if "  Cautious  : yes" in lines:
+	    #print 'sat',lines[-10]
+            optimum = parser.parse(lines[-11])
+            optimum.score = tuple(map(int, lines[-10][13:].split()))
+            accu = [optimum]
 
         return accu
 
