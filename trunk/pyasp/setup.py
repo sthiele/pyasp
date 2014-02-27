@@ -37,23 +37,14 @@ class install(_install):
                 print "clasp/claspD/gringo binaries are not yet available for Mac OS 32bits"
                 exit()
                 
-            CLASP_URL = BASE_URL + "macos/clasp-2.1.4"
-            CLASPD_URL = BASE_URL + "macos/claspD-2.0"
-            HCLASP_URL = BASE_URL + "macos/hclasp"
-            UNCLASP_URL = BASE_URL + "macos/unclasp"         
+            CLASP_URL = BASE_URL + "macos/clasp-3.0.1"       
             GRINGO_URL = BASE_URL + "macos/gringo-3.0.5"
         else:                       
-            CLASP_URL = BASE_URL + "linux-%s/clasp-2.1.4" % architecture
-            CLASPD_URL = BASE_URL + "linux-%s/claspD-2.0" % architecture
-            HCLASP_URL = BASE_URL + "linux-%s/hclasp" % architecture
-            UNCLASP_URL = BASE_URL + "linux-%s/unclasp" % architecture
+            CLASP_URL = BASE_URL + "linux-%s/clasp-3.0.1" % architecture
             GRINGO_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
             
         
         urllib.urlretrieve(CLASP_URL, path + "/clasp")
-        urllib.urlretrieve(CLASPD_URL, path + "/claspD")
-        urllib.urlretrieve(HCLASP_URL, path + "/hclasp")
-        urllib.urlretrieve(UNCLASP_URL, path + "/unclasp")        
         urllib.urlretrieve(GRINGO_URL, path + "/gringo")
         
     def run(self):
@@ -90,7 +81,7 @@ class install(_install):
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.2.2',
+    version = '1.3.dev',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, clasp, claspD, hclasp.',
