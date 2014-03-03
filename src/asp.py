@@ -424,14 +424,64 @@ class GringoClaspBase(object):
 class GringoClasp(GringoClaspBase):
     pass
 
-class GringoClaspOpt(GringoClaspBase):
-    def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
+        
+class GringoHClasp(GringoClaspBase):
+    def __init__(self, clasp_bin = root + '/bin/hclasp', clasp_options = '',
                        gringo_bin = root + '/bin/gringo', gringo_options = '', 
-                       optimization = True):
-                       
-        super(GringoClaspOpt, self).__init__(clasp_bin, clasp_options, gringo_bin, gringo_options, optimization)
-    
-
+                       optimization = False):
                    
-     
+        super(GringoHClasp, self).__init__(clasp_bin, clasp_options, gringo_bin, gringo_options, optimization)
+        
+    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+        grounding = self.__ground__(programs, additionalProgramText)
+
+        solving = self.__solve__(nmodels, grounding)
+        
+        parser = Parser(collapseTerms,collapseAtoms,callback)
+        res = json.loads(solving)
+        #key = self.__get_witnesses_key__(res)
+
+        if res['Result'] == "SATISFIABLE":
+            #if key == 'Value':
+            witnesses = res['Witnesses']
+            #else:
+                #witnesses = [res['Call'][0]['Witnesses'][-1]]
+
+            accu = self.__parse_witnesses__(parser, witnesses)            
+                
+        #elif res['Result'] == "OPTIMUM FOUND":
+            #if key == 'Value':
+                #if nmodels == 1:
+		  #witnesses = [res['Call'][0]['Witnesses'][-1]]
+                #elif (nmodels != 1):
+		  #numopts= res['Models']['Optimal']
+		  #if numopts==0 : 
+		    #print 'WARNING: OPTIMUM FOUND but zero optimals'
+		    #witnesses=[]
+		  #else :
+		    #offset =len(res['Call'][0]['Witnesses'])-numopts
+		    #witnesses = res['Call'][0]['Witnesses'][offset:]
+                
+            #else:
+                #witnesses = [res['Call'][0]['Witnesses'][-1]]
+                
+           
+            #accu = self.__parse_witnesses__(parser, witnesses)
+            
+        else:
+            accu = []
+
+        return accu            
+            
+            
+    def __parse_witnesses__(self, parser, witnesses):
+        accu = []
+        for answer in witnesses:
+            atoms = filter(lambda atom: not atom.startswith('_'), answer['Value'])
+            ts = parser.parse(" ".join(atoms))
+            if answer.has_key('Opt'):
+                ts.score = answer['Opt']
+            accu.append(ts)
+        return accu
+        
         
