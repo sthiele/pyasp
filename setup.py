@@ -84,10 +84,10 @@ class install(_install):
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.3dev',
+    version = '1.3',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
-    description='A convenience wrapper for the ASP tools gringo, clasp, claspD, hclasp.',
+    description='A convenience wrapper for the ASP tools gringo, clasp, hclasp.',
     long_description=open('README').read(),
     author='Sven Thiele',
     author_email='sthiele78@gmail.com', 
