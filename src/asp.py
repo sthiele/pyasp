@@ -344,7 +344,7 @@ class GringoClaspBase(object):
                 
         return grounding
                         
-    def __solve__(self, nmodels, grounding, opts = [], json=True):
+    def __solve__(self, grounding, opts = [], json=True):
         try:
 	    opts = opts + ['--stats']
             addoptions = []
@@ -354,7 +354,7 @@ class GringoClaspBase(object):
             if json:
                 opts = opts + ['--outf=2']
             self._clasp = subprocess.Popen(
-                filter_empty_str([self.clasp_bin] + addoptions + [str(nmodels)] + opts),
+                filter_empty_str([self.clasp_bin] + addoptions  + opts),
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE)
@@ -377,13 +377,10 @@ class GringoClaspBase(object):
         
         return solving
                 
-    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+    def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         grounding = self.__ground__(programs, additionalProgramText)
-        #if self.optimization:
-            #solving = self.__solve__(0, grounding)
-        #else:
-            #solving = self.__solve__(nmodels, grounding)
-        solving = self.__solve__(nmodels, grounding)
+
+        solving = self.__solve__(grounding)
         
         parser = Parser(collapseTerms,collapseAtoms,callback)
         res = json.loads(solving)
@@ -399,21 +396,17 @@ class GringoClaspBase(object):
                 
         elif res['Result'] == "OPTIMUM FOUND":
             if key == 'Value':
-                if nmodels == 1:
-		  witnesses = [res['Call'][0]['Witnesses'][-1]]
-                elif (nmodels != 1):
-		  numopts= res['Models']['Optimal']
-		  if numopts==0 : 
+		numopts= res['Models']['Optimal']
+		if numopts==0 : 
 		    print 'WARNING: OPTIMUM FOUND but zero optimals'
 		    witnesses=[]
-		  else :
+		else :
 		    offset =len(res['Call'][0]['Witnesses'])-numopts
 		    witnesses = res['Call'][0]['Witnesses'][offset:]
                 
             else:
                 witnesses = [res['Call'][0]['Witnesses'][-1]]
-                
-           
+                 
             accu = self.__parse_witnesses__(parser, witnesses)
             
         else:
@@ -431,49 +424,24 @@ class GringoHClasp(GringoClaspBase):
                        optimization = False):
                    
         super(GringoHClasp, self).__init__(clasp_bin, clasp_options, gringo_bin, gringo_options, optimization)
-        
-    def run(self, programs, nmodels = 1, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+
+    def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         grounding = self.__ground__(programs, additionalProgramText)
 
-        solving = self.__solve__(nmodels, grounding)
+        solving = self.__solve__(grounding)
         
         parser = Parser(collapseTerms,collapseAtoms,callback)
         res = json.loads(solving)
-        #key = self.__get_witnesses_key__(res)
 
         if res['Result'] == "SATISFIABLE":
-            #if key == 'Value':
             witnesses = res['Witnesses']
-            #else:
-                #witnesses = [res['Call'][0]['Witnesses'][-1]]
-
             accu = self.__parse_witnesses__(parser, witnesses)            
-                
-        #elif res['Result'] == "OPTIMUM FOUND":
-            #if key == 'Value':
-                #if nmodels == 1:
-		  #witnesses = [res['Call'][0]['Witnesses'][-1]]
-                #elif (nmodels != 1):
-		  #numopts= res['Models']['Optimal']
-		  #if numopts==0 : 
-		    #print 'WARNING: OPTIMUM FOUND but zero optimals'
-		    #witnesses=[]
-		  #else :
-		    #offset =len(res['Call'][0]['Witnesses'])-numopts
-		    #witnesses = res['Call'][0]['Witnesses'][offset:]
-                
-            #else:
-                #witnesses = [res['Call'][0]['Witnesses'][-1]]
-                
-           
-            #accu = self.__parse_witnesses__(parser, witnesses)
-            
+                           
         else:
             accu = []
 
         return accu            
-            
-            
+                        
     def __parse_witnesses__(self, parser, witnesses):
         accu = []
         for answer in witnesses:
