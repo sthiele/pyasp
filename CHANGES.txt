@@ -1,0 +1,5 @@
+ 
+v1.3.1
+------
+removed number of models argument from run method of GringoClasp
+number of models can now be determined like a regular clasp option
