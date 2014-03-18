@@ -418,38 +418,4 @@ class GringoClasp(GringoClaspBase):
     pass
 
         
-class GringoHClasp(GringoClaspBase):
-    def __init__(self, clasp_bin = root + '/bin/hclasp', clasp_options = '',
-                       gringo_bin = root + '/bin/gringo', gringo_options = '', 
-                       optimization = False):
-                   
-        super(GringoHClasp, self).__init__(clasp_bin, clasp_options, gringo_bin, gringo_options, optimization)
-
-    def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
-        grounding = self.__ground__(programs, additionalProgramText)
-
-        solving = self.__solve__(grounding)
-        
-        parser = Parser(collapseTerms,collapseAtoms,callback)
-        res = json.loads(solving)
-
-        if res['Result'] == "SATISFIABLE":
-            witnesses = res['Witnesses']
-            accu = self.__parse_witnesses__(parser, witnesses)            
-                           
-        else:
-            accu = []
-
-        return accu            
-                        
-    def __parse_witnesses__(self, parser, witnesses):
-        accu = []
-        for answer in witnesses:
-            atoms = filter(lambda atom: not atom.startswith('_'), answer['Value'])
-            ts = parser.parse(" ".join(atoms))
-            if answer.has_key('Opt'):
-                ts.score = answer['Opt']
-            accu.append(ts)
-        return accu
-        
         
