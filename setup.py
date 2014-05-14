@@ -81,7 +81,7 @@ class install(_install):
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.3.2dev',
+    version = '1.3.3dev',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, clasp.',
