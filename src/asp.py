@@ -346,7 +346,7 @@ class GringoClaspBase(object):
                         
     def __solve__(self, grounding, opts = [], json=True):
         try:
-	    opts = opts + ['--stats']
+	    #opts = opts + ['--stats']
             addoptions = []
             if self.clasp_options:
                 addoptions = self.clasp_options.split()
