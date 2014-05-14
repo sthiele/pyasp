@@ -1,8 +1,12 @@
  
-v1.3.2
+v1.3.3
 ------
 switch to use clasp version 3.0.2
 remove hclasp and classes GringoHClasp
+
+v1.3.2
+------
+no longer user --stats option in asp.py
 
 v1.3.1
 ------
