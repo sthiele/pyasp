@@ -1,7 +1,7 @@
  
 v1.3.3
 ------
-switch to use clasp version 3.0.2
+switch to use clasp version 3.0.5
 remove hclasp and classes GringoHClasp
 
 v1.3.2
