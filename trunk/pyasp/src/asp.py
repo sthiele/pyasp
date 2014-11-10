@@ -39,8 +39,9 @@ if sys.flags.optimize in ['-O', '-OO'] and optimize == 0:
 
 def debug(s):
   import inspect
-  print >>sys.stderr, "DBG %03d: %s" % \
-    (inspect.currentframe().f_back.f_lineno,s)
+  print("DBG %03d: %s" % \
+    (inspect.currentframe().f_back.f_lineno,s), file=sys.stderr)
+
 
 # mutable and not hashable!
 class TermSet(set):
@@ -151,7 +152,7 @@ class Lexer:
         t.lexer.lineno += t.value.count("\n")
 
     def t_error(self, t):
-        print "Illegal character '%s'" % t.value[0]
+        print("Illegal character "+str(t.value[0]))
         t.lexer.skip(1)
 
 class Parser:
@@ -235,9 +236,9 @@ class Parser:
                 t[0] = Term(t[1], t[3])
 
     def p_error(self, t):
-        print "Syntax error at '%s'" % t
+        print("Syntax error at "+str(t))
         import inspect
-        print ''.join(map(lambda x: "  %s:%s\n    %s" % (x[1], x[2], x[4][0]),inspect.stack()))
+        print (''.join(map(lambda x: "  %s:%s\n    %s" % (x[1], x[2], x[4][0]),inspect.stack())))
 
     def parse(self, line):
         self.accu = TermSet()
@@ -252,7 +253,7 @@ class Parser:
         return self.accu
 
 def filter_empty_str(l):
-    return filter(lambda x: x != '',l)
+    return [x for x in l if x != '']
 
 class String2TermSet(TermSet):
     def __init__(self,s):
@@ -298,7 +299,7 @@ class GringoClaspBase(object):
         accu = []
         for answer in witnesses:
             ts = parser.parse(" ".join(answer['Value']))
-            if answer.has_key('Costs'):
+            if 'Costs' in answer:
                 ts.score = answer['Costs']
                 
             accu.append(ts)
@@ -307,9 +308,9 @@ class GringoClaspBase(object):
         
     def __get_witnesses_key__(self,result):
         key = 'Value'
-        if result['Models'].has_key('Brave'):
+        if 'Brave' in result['Models']:
             key = 'Brave'
-        elif result['Models'].has_key('Cautious'):
+        elif 'Cautious' in result['Models']:
             key = 'Cautious'
             
         return key
@@ -331,7 +332,7 @@ class GringoClaspBase(object):
             commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             self._gringo = subprocess.Popen(commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             
-        except OSError, e:
+        except OSError as e:
             if e.errno == 2:
                 raise Exception('Grounder \'%s\' not found' % self.gringo_bin)
             else: 
@@ -359,7 +360,7 @@ class GringoClaspBase(object):
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE)
                 
-        except OSError, e:
+        except OSError as e:
             if e.errno == 2:
                 raise Exception('Solver \'%s\' not found' % self.clasp_bin)
             else: 
@@ -383,7 +384,7 @@ class GringoClaspBase(object):
         solving = self.__solve__(grounding)
         
         parser = Parser(collapseTerms,collapseAtoms,callback)
-        res = json.loads(solving)
+        res = json.loads(solving.decode())
         key = self.__get_witnesses_key__(res)
 
         if res['Result'] == "SATISFIABLE":
@@ -396,17 +397,17 @@ class GringoClaspBase(object):
                 
         elif res['Result'] == "OPTIMUM FOUND":
             if key == 'Value':
-		numopts= res['Models']['Optimal']
-		if numopts==0 : 
-		    print 'WARNING: OPTIMUM FOUND but zero optimals'
-		    witnesses=[]
-		else :
-		    offset =len(res['Call'][0]['Witnesses'])-numopts
-		    witnesses = res['Call'][0]['Witnesses'][offset:]
-                
+                numopts= res['Models']['Optimal']
+                if numopts==0 :
+                    print('WARNING: OPTIMUM FOUND but zero optimals')
+                    witnesses=[]
+                else :
+                    offset =len(res['Call'][0]['Witnesses'])-numopts
+                    witnesses = res['Call'][0]['Witnesses'][offset:]
+
             else:
                 witnesses = [res['Call'][0]['Witnesses'][-1]]
-                 
+
             accu = self.__parse_witnesses__(parser, witnesses)
             
         else:
