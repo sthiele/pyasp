@@ -23,7 +23,8 @@ import sys
 import platform
 import distutils
 import site
-import urllib
+import urllib.request, urllib.parse, urllib.error
+
 import sysconfig
 
 from setuptools.command.install import install as _install
@@ -34,7 +35,7 @@ class install(_install):
         architecture = platform.architecture()[0][:-3]
         if sys.platform == 'darwin':
             if architecture == '32':
-                print "clasp/claspD/gringo binaries are not yet available for Mac OS 32bits"
+                print("clasp/claspD/gringo binaries are not yet available for Mac OS 32bits")
                 exit()
                 
             CLASP_URL = BASE_URL + "macos/clasp-3.0.5"       
@@ -44,8 +45,9 @@ class install(_install):
             GRINGO_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
             
         
-        urllib.urlretrieve(CLASP_URL, path + "/clasp")
-        urllib.urlretrieve(GRINGO_URL, path + "/gringo")
+        urllib.request.urlretrieve(CLASP_URL, path + "/clasp")
+        urllib.request.urlretrieve(GRINGO_URL, path + "/gringo")
+
         
     def run(self):
         _install.run(self)
@@ -54,7 +56,7 @@ class install(_install):
             userdir = site.getusersitepackages()+"/pyasp/bin" 
             self.get_binaries(userdir)
             cmd="chmod +x "+userdir+"/*"
-            print cmd
+            print(cmd)
             os.system(cmd)
         else :
             py_version = "%s.%s" % (sys.version_info[0], sys.version_info[1])
@@ -73,15 +75,15 @@ class install(_install):
                     break
                 
             if cmd:
-                print cmd
+                print(cmd)
                 os.system(cmd)
             else:
-                print "pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp."
+                print("pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp.")
                 
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.3.3',
+    version = '1.4.0',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, clasp.',
