@@ -24,7 +24,6 @@ import platform
 import distutils
 import site
 import urllib.request, urllib.parse, urllib.error
-
 import sysconfig
 
 from setuptools.command.install import install as _install
@@ -35,16 +34,16 @@ class install(_install):
         architecture = platform.architecture()[0][:-3]
         if sys.platform == 'darwin':
             if architecture == '32':
-                print("clasp/claspD/gringo binaries are not yet available for Mac OS 32bits")
+                print("clasp/gringo3/gringo4 binaries are not yet available for Mac OS 32bits")
                 exit()
                 
             CLASP_URL = BASE_URL + "macos/clasp-3.1.1"
-            GRINGO3_URL = BASE_URL + "macos/gringo-3.1.1"
+            GRINGO3_URL = BASE_URL + "macos/gringo-3.0.5"
             GRINGO4_URL = BASE_URL + "macos/gringo-4.4.0"
             
         else:                       
             CLASP_URL = BASE_URL + "linux-%s/clasp-3.1.1" % architecture
-            GRINGO3_URL = BASE_URL + "linux-%s/gringo-3.1.1" % architecture
+            GRINGO3_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
             GRINGO4_URL = BASE_URL + "linux-%s/gringo-4.4.0" % architecture
             
         
@@ -90,7 +89,7 @@ setup(
     version = '1.4.1',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
-    description='A convenience wrapper for the ASP tools gringo, clasp.',
+    description='A convenience wrapper for the ASP tools gringo, gringo4 and clasp.',
     long_description=open('README').read(),
     author='Sven Thiele',
     author_email='sthiele78@gmail.com', 
