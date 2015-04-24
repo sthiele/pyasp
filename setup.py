@@ -38,15 +38,19 @@ class install(_install):
                 print("clasp/claspD/gringo binaries are not yet available for Mac OS 32bits")
                 exit()
                 
-            CLASP_URL = BASE_URL + "macos/clasp-3.0.5"       
-            GRINGO_URL = BASE_URL + "macos/gringo-3.0.5"
+            CLASP_URL = BASE_URL + "macos/clasp-3.1.1"
+            GRINGO3_URL = BASE_URL + "macos/gringo-3.1.1"
+            GRINGO4_URL = BASE_URL + "macos/gringo-4.4.0"
+            
         else:                       
-            CLASP_URL = BASE_URL + "linux-%s/clasp-3.0.5" % architecture
-            GRINGO_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
+            CLASP_URL = BASE_URL + "linux-%s/clasp-3.1.1" % architecture
+            GRINGO3_URL = BASE_URL + "linux-%s/gringo-3.1.1" % architecture
+            GRINGO4_URL = BASE_URL + "linux-%s/gringo-4.4.0" % architecture
             
         
         urllib.request.urlretrieve(CLASP_URL, path + "/clasp")
-        urllib.request.urlretrieve(GRINGO_URL, path + "/gringo")
+        urllib.request.urlretrieve(GRINGO3_URL, path + "/gringo3")
+        urllib.request.urlretrieve(GRINGO4_URL, path + "/gringo4")
 
         
     def run(self):
@@ -78,12 +82,12 @@ class install(_install):
                 print(cmd)
                 os.system(cmd)
             else:
-                print("pyasp binaries path not found. You need to download and put in place the binaries for gringo, clasp and claspD in order to start using pyasp.")
+                print("pyasp binaries path not found. You need to download and put in place the binaries for gringo3, gringo4 and clasp in order to start using pyasp.")
                 
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.4.0',
+    version = '1.4.1',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, clasp.',
