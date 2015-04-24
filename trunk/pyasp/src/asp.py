@@ -276,7 +276,7 @@ def exclude_sol(sols,fn=None):
         
 class GringoClaspBase(object):
     def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
-                       gringo_bin = root + '/bin/gringo', gringo_options = '', 
+                       gringo_bin = root + '/bin/gringo3', gringo_options = '',
                        optimization = False):
         self.clasp_bin = clasp_bin
         self.gringo_bin = gringo_bin
@@ -418,5 +418,24 @@ class GringoClaspBase(object):
 class GringoClasp(GringoClaspBase):
     pass
 
-        
+class Gringo4Clasp(GringoClaspBase):
+    def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
+                       gringo_bin = root + '/bin/gringo4', gringo_options = '',
+                       optimization = False):
+        self.clasp_bin = clasp_bin
+        self.gringo_bin = gringo_bin
+        self.clasp_options = clasp_options
+        self.gringo_options = gringo_options
+        self._clasp = None
+        self._gringo = None
+        self.clasp_stderr = None
+        self.gringo_stderr = None
+        self.clasp_noerror_retval = set([10, 20, 30])
+        self.gringo_noerror_retval = set([0])
+
+        if clasp_options.find('--opt-all') != -1:
+            #workaround for backwards compatibility
+            optimization = True
+
+        self.optimization = optimization        
         
