@@ -1,3 +1,7 @@
+v.1.4.1
+-------
+Include gringo4 available via the class Gringo4Clasp
+supporting the new gringo4 syntax
 v.1.4.0
 -------
 port to python 3
