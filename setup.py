@@ -23,7 +23,10 @@ import sys
 import platform
 import distutils
 import site
-import urllib.request, urllib.parse, urllib.error
+try:
+  import urllib.request, urllib.parse, urllib.error
+except ImportError:
+  import urllib, urlparse
 import sysconfig
 
 from setuptools.command.install import install as _install
@@ -86,7 +89,7 @@ class install(_install):
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
-    version = '1.4.1',
+    version = '1.4.2',
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, gringo4 and clasp.',

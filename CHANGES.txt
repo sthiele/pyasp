@@ -1,3 +1,7 @@
+v.1.4.2
+-------
+* added support for python 2.7
+
 v.1.4.1
 -------
 Include gringo4 available via the class Gringo4Clasp
