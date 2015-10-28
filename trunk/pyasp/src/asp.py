@@ -16,6 +16,7 @@
 # along with pyasp.  If not, see <http://www.gnu.org/licenses/>.import random
 
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import re
 import tempfile
 import os
@@ -347,7 +348,7 @@ class GringoClaspBase(object):
                         
     def __solve__(self, grounding, opts = [], json=True):
         try:
-	    #opts = opts + ['--stats']
+            #opts = opts + ['--stats']
             addoptions = []
             if self.clasp_options:
                 addoptions = self.clasp_options.split()
@@ -438,4 +439,3 @@ class Gringo4Clasp(GringoClaspBase):
             optimization = True
 
         self.optimization = optimization        
-        

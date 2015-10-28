@@ -13,6 +13,8 @@
 # a basic preprocessor working.   Other modules may import these if they want
 # -----------------------------------------------------------------------------
 
+from __future__ import print_function
+
 tokens = (
    'CPP_ID','CPP_INTEGER', 'CPP_FLOAT', 'CPP_STRING', 'CPP_CHAR', 'CPP_WS', 'CPP_COMMENT', 'CPP_POUND','CPP_DPOUND'
 )
