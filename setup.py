@@ -40,14 +40,14 @@ class install(_install):
                 print("clasp/gringo3/gringo4 binaries are not yet available for Mac OS 32bits")
                 exit()
                 
-            CLASP_URL = BASE_URL + "macos/clasp-3.1.1"
+            CLASP_URL = BASE_URL + "macos/clasp-3.1.3"
             GRINGO3_URL = BASE_URL + "macos/gringo-3.0.5"
-            GRINGO4_URL = BASE_URL + "macos/gringo-4.4.0"
+            GRINGO4_URL = BASE_URL + "macos/gringo-4.5.3"
             
         else:                       
-            CLASP_URL = BASE_URL + "linux-%s/clasp-3.1.1" % architecture
+            CLASP_URL = BASE_URL + "linux-%s/clasp-3.1.3" % architecture
             GRINGO3_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
-            GRINGO4_URL = BASE_URL + "linux-%s/gringo-4.4.0" % architecture
+            GRINGO4_URL = BASE_URL + "linux-%s/gringo-4.5.3" % architecture
             
         
         urllib.request.urlretrieve(CLASP_URL, path + "/clasp")
