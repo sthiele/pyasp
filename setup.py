@@ -93,7 +93,7 @@ setup(
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',   
     description='A convenience wrapper for the ASP tools gringo, gringo4 and clasp.',
-    long_description=open('README').read(),
+    long_description=open('README.rst').read(),
     author='Sven Thiele',
     author_email='sthiele78@gmail.com', 
     
