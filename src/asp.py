@@ -49,7 +49,7 @@ class TermSet(set):
     def __init__(self, terms=[]):
         super(TermSet, self).__init__(terms)
         self.score = None
-        
+
     def filter(self,f):
         accu = TermSet()
         for e in self:
@@ -82,16 +82,16 @@ class Term:
         self.predicate = predicate
         self.arguments = arguments
 
-    def nb_args(self): 
+    def nb_args(self):
         return len(self.arguments)
 
-    def arg(self,n): 
+    def arg(self,n):
         return self.arguments[n]
-    
-    def args(self): 
+
+    def args(self):
         return self.arguments
 
-    def pred(self): 
+    def pred(self):
         return self.predicate
 
     def explode(self):
@@ -102,23 +102,23 @@ class Term:
             return "Term(%s)" % (repr(self.predicate),)
         else:
             return "Term(%s,[%s])" % (repr(self.predicate),",".join(map(repr,self.arguments)))
-    
+
     def __str__(self):
         if len(self.arguments) == 0:
             return self.predicate
         else:
             return self.predicate + "(" + ",".join(map(str,self.arguments)) + ")"
-    
+
     def __hash__(self):
         return tuple([self.predicate] + self.arguments).__hash__()
-    
+
     def __eq__(self,other):
         return self.predicate == other.predicate and self.arguments == other.arguments
-    
+
     def sip(self,s):
         """sip = string in predicate"""
         return (s in self.predicate)
-    
+
     def p(self,s):
         return (s == self.predicate)
 
@@ -181,7 +181,7 @@ class Parser:
 
         if collapseAtoms and not collapseTerms:
             raise "if atoms are collapsed, functions must also be collapsed!"
-        
+
         self.parser = yacc.yacc(module=self, optimize=optimize, tabmodule='asp_py_parsetab')
 
     def p_answerset(self, t):
@@ -244,13 +244,13 @@ class Parser:
     def parse(self, line):
         self.accu = TermSet()
         line = line.strip()
-    
+
         if len(line) > 0:
             self.parser.parse(line, lexer=self.lexer.lexer)
 
         if self.callback:
             self.callback(self.accu)
-        
+
         return self.accu
 
 def filter_empty_str(l):
@@ -262,7 +262,7 @@ class String2TermSet(TermSet):
         p = Parser(True, False)
         atoms = p.parse(s)
         TermSet.__init__(self,atoms)
-    
+
 def exclude_sol(sols,fn=None):
     if fn:
         file = open(fn,'w')
@@ -271,10 +271,10 @@ def exclude_sol(sols,fn=None):
         file = os.fdopen(fd,'w')
     for s in sols:
         file.write(s.exclude_rule() + '\n')
-        
+
     file.close()
     return fn
-        
+
 class GringoClaspBase(object):
     def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
                        gringo_bin = root + '/bin/gringo3', gringo_options = '',
@@ -289,33 +289,33 @@ class GringoClaspBase(object):
         self.gringo_stderr = None
         self.clasp_noerror_retval = set([10, 20, 30])
         self.gringo_noerror_retval = set([0])
-        
+
         if clasp_options.find('--opt-all') != -1:
             #workaround for backwards compatibility
             optimization = True
-        
+
         self.optimization = optimization
-        
+
     def __parse_witnesses__(self, parser, witnesses):
         accu = []
         for answer in witnesses:
             ts = parser.parse(" ".join(answer['Value']))
             if 'Costs' in answer:
                 ts.score = answer['Costs']
-                
+
             accu.append(ts)
-            
+
         return accu
-        
+
     def __get_witnesses_key__(self,result):
         key = 'Value'
         if 'Brave' in result['Models']:
             key = 'Brave'
         elif 'Cautious' in result['Models']:
             key = 'Cautious'
-            
+
         return key
-        
+
     def __ground__(self, programs, additionalProgramText):
         try:
             additionalPrograms = []
@@ -325,27 +325,27 @@ class GringoClaspBase(object):
                 file.write(str(additionalProgramText))
                 file.close()
                 additionalPrograms.append(fn)
-              
+
             addoptions = []
             if self.gringo_options:
                 addoptions = self.gringo_options.split()
 
             commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             self._gringo = subprocess.Popen(commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-            
+
         except OSError as e:
             if e.errno == 2:
                 raise Exception('Grounder \'%s\' not found' % self.gringo_bin)
-            else: 
+            else:
                 raise e
-                
+
         (grounding,self.gringo_stderr) = self._gringo.communicate()
         if self._gringo.returncode not in self.gringo_noerror_retval:
             raise Exception("got error %d from gringo: '%s'" % \
                 (self._gringo.returncode, self.gringo_stderr))
-                
+
         return grounding
-                        
+
     def __solve__(self, grounding, opts = [], json=True):
         try:
             #opts = opts + ['--stats']
@@ -360,30 +360,30 @@ class GringoClaspBase(object):
                 stdin=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE)
-                
+
         except OSError as e:
             if e.errno == 2:
                 raise Exception('Solver \'%s\' not found' % self.clasp_bin)
-            else: 
+            else:
                 raise e
-                
+
         (solving,self.clasp_stderr) = self._clasp.communicate(grounding)
         self.clasp_stderr = solving + self.clasp_stderr
-        
+
         if self._clasp.returncode not in self.clasp_noerror_retval:
             raise Exception("got error %d from clasp: '%s' gringo: '%s'" % \
                 (self._clasp.returncode, self.clasp_stderr, self.gringo_stderr))
-                    
+
         self._clasp = None
         self._gringo = None
-        
+
         return solving
-                
+
     def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         grounding = self.__ground__(programs, additionalProgramText)
 
         solving = self.__solve__(grounding)
-        
+
         parser = Parser(collapseTerms,collapseAtoms,callback)
         res = json.loads(solving.decode())
         key = self.__get_witnesses_key__(res)
@@ -394,8 +394,8 @@ class GringoClaspBase(object):
             else:
                 witnesses = [res['Call'][0]['Witnesses'][-1]]
 
-            accu = self.__parse_witnesses__(parser, witnesses)            
-                
+            accu = self.__parse_witnesses__(parser, witnesses)
+
         elif res['Result'] == "OPTIMUM FOUND":
             if key == 'Value':
                 numopts= res['Models']['Optimal']
@@ -410,7 +410,7 @@ class GringoClaspBase(object):
                 witnesses = [res['Call'][0]['Witnesses'][-1]]
 
             accu = self.__parse_witnesses__(parser, witnesses)
-            
+
         else:
             accu = []
 
@@ -418,6 +418,17 @@ class GringoClaspBase(object):
 
 class GringoClasp(GringoClaspBase):
     pass
+
+class Gringo(GringoClaspBase):
+    def __init__(self, gringo_bin = root + '/bin/gringo', gringo_options = ''):
+        self.gringo_bin = gringo_bin
+        self.gringo_options = gringo_options
+        self._gringo = None
+        self.gringo_stderr = None
+        self.gringo_noerror_retval = set([0])
+
+    def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+        return self.__ground__(programs, additionalProgramText)
 
 class Gringo4Clasp(GringoClaspBase):
     def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
@@ -438,4 +449,65 @@ class Gringo4Clasp(GringoClaspBase):
             #workaround for backwards compatibility
             optimization = True
 
-        self.optimization = optimization        
+        self.optimization = optimization
+
+class Gringo4(Gringo4Clasp):
+    def __init__(self, gringo_bin = root + '/bin/gringo4', gringo_options = ''):
+        self.gringo_bin = gringo_bin
+        self.gringo_options = gringo_options
+        self._gringo = None
+        self.gringo_stderr = None
+        self.gringo_noerror_retval = set([0])
+
+    def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+        return self.__ground__(programs, additionalProgramText)
+
+class Clasp(GringoClaspBase):
+    def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
+                       optimization = False):
+        self.clasp_bin = clasp_bin
+        self.clasp_options = clasp_options
+        self._clasp = None
+        self.clasp_stderr = None
+        self.clasp_noerror_retval = set([10, 20, 30])
+
+        if clasp_options.find('--opt-all') != -1:
+            #workaround for backwards compatibility
+            optimization = True
+
+        self.optimization = optimization
+
+    def run(self, grounded, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
+        solving = self.__solve__(grounded)
+
+        parser = Parser(collapseTerms,collapseAtoms,callback)
+        res = json.loads(solving.decode())
+        key = self.__get_witnesses_key__(res)
+
+        if res['Result'] == "SATISFIABLE":
+            if key == 'Value':
+                witnesses = res['Call'][0]['Witnesses']
+            else:
+                witnesses = [res['Call'][0]['Witnesses'][-1]]
+
+            accu = self.__parse_witnesses__(parser, witnesses)
+
+        elif res['Result'] == "OPTIMUM FOUND":
+            if key == 'Value':
+                numopts= res['Models']['Optimal']
+                if numopts==0 :
+                    print('WARNING: OPTIMUM FOUND but zero optimals')
+                    witnesses=[]
+                else :
+                    offset =len(res['Call'][0]['Witnesses'])-numopts
+                    witnesses = res['Call'][0]['Witnesses'][offset:]
+
+            else:
+                witnesses = [res['Call'][0]['Witnesses'][-1]]
+
+            accu = self.__parse_witnesses__(parser, witnesses)
+
+        else:
+            accu = []
+
+        return accu
