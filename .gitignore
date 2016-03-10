@@ -1,0 +1,6 @@
+venv/
+build/
+dist/
+*.pyc
+Session.vim
+pyasp.egg-info
