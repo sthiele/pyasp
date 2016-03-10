@@ -39,27 +39,27 @@ class install(_install):
             if architecture == '32':
                 print("clasp/gringo3/gringo4 binaries are not yet available for Mac OS 32bits")
                 exit()
-                
+
             CLASP_URL = BASE_URL + "macos/clasp-3.1.3"
             GRINGO3_URL = BASE_URL + "macos/gringo-3.0.5"
             GRINGO4_URL = BASE_URL + "macos/gringo-4.5.3"
-            
-        else:                       
+
+        else:
             CLASP_URL = BASE_URL + "linux-%s/clasp-3.1.3" % architecture
             GRINGO3_URL = BASE_URL + "linux-%s/gringo-3.0.5" % architecture
             GRINGO4_URL = BASE_URL + "linux-%s/gringo-4.5.3" % architecture
-            
-        
+
+
         urllib.request.urlretrieve(CLASP_URL, path + "/clasp")
         urllib.request.urlretrieve(GRINGO3_URL, path + "/gringo3")
         urllib.request.urlretrieve(GRINGO4_URL, path + "/gringo4")
 
-        
+
     def run(self):
         _install.run(self)
-        
+
         if '--user' in sys.argv[-1] :
-            userdir = site.getusersitepackages()+"/pyasp/bin" 
+            userdir = site.getusersitepackages() + "/pyasp/bin"
             self.get_binaries(userdir)
             cmd="chmod +x "+userdir+"/*"
             print(cmd)
@@ -79,30 +79,30 @@ class install(_install):
                     self.get_binaries(path)
                     cmd = "chmod +x "+path+"/*"
                     break
-                
+
             if cmd:
                 print(cmd)
                 os.system(cmd)
             else:
                 print("pyasp binaries path not found. You need to download and put in place the binaries for gringo3, gringo4 and clasp in order to start using pyasp.")
-                
+
 setup(
     cmdclass={'install': install},
     name = 'pyasp',
     version = '1.4.2',
     url='http://pypi.python.org/pypi/pyasp/',
-    license='GPLv3+',   
+    license='GPLv3+',
     description='A convenience wrapper for the ASP tools gringo, gringo4 and clasp.',
     long_description=open('README.rst').read(),
     author='Sven Thiele',
-    author_email='sthiele78@gmail.com', 
-    
+    author_email='sthiele78@gmail.com',
+
     package_dir = { 'pyasp' : 'src'},
     package_data = {
         'pyasp' : ['bin/*.txt']
     },
     packages = [
-        'pyasp', 
+        'pyasp',
         'pyasp.ply'
     ]
 )
