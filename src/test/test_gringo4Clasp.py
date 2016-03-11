@@ -5,7 +5,7 @@ Testing of the main API using examples found in Potassco documentation.
 """
 import unittest
 
-from pyasp import asp
+from .. import asp
 
 
 def build_solver(constants={}, gringo_options='', clasp_options=''):
