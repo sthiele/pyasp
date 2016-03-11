@@ -1,0 +1,10 @@
+venv/
+build/
+dist/
+*.pyc
+Session.vim
+pyasp.egg-info
+asp_py_lextab.py
+asp_py_parsetab.py
+src/bin/clasp
+src/bin/gringo*

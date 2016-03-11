@@ -37,3 +37,6 @@ clean:
 	rm -rf build/ MANIFEST
 	find . -name '*.pyc' -delete
 
+t: unittest
+unittest:
+	python3 -m unittest discover -v
