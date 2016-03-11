@@ -72,8 +72,6 @@ class TermSet(set):
         return fn
     def exclude_rule(self):
         return ':- ' + ','.join(map(str,self)) + '.'
-    def __hash__(self):
-        raise "TermSet is mutable and not hashable!"
 
 # immutable and hashable
 class Term:
@@ -180,7 +178,8 @@ class Parser:
         self.callback = callback
 
         if collapseAtoms and not collapseTerms:
-            raise "if atoms are collapsed, functions must also be collapsed!"
+            raise ValueError("if atoms are collapsed, functions must"
+                             " also be collapsed!")
 
         self.parser = yacc.yacc(module=self, optimize=optimize, tabmodule='asp_py_parsetab')
 
@@ -335,18 +334,18 @@ class GringoClaspBase(object):
 
         except OSError as e:
             if e.errno == 2:
-                raise Exception('Grounder \'%s\' not found' % self.gringo_bin)
+                raise OSError('Grounder \'%s\' not found' % self.gringo_bin)
             else:
                 raise e
 
-        (grounding,self.gringo_stderr) = self._gringo.communicate()
+        grounding, self.gringo_stderr = self._gringo.communicate()
         if self._gringo.returncode not in self.gringo_noerror_retval:
-            raise Exception("got error %d from gringo: '%s'" % \
-                (self._gringo.returncode, self.gringo_stderr))
+            raise EnvironmentError("got error %d from gringo:\n%s" % \
+                (self._gringo.returncode, self.gringo_stderr.decode()))
 
         return grounding
 
-    def __solve__(self, grounding, opts = [], json=True):
+    def __solve__(self, grounding, opts=[], json=True):
         try:
             #opts = opts + ['--stats']
             addoptions = []
@@ -367,12 +366,16 @@ class GringoClaspBase(object):
             else:
                 raise e
 
-        (solving,self.clasp_stderr) = self._clasp.communicate(grounding)
+        solving, self.clasp_stderr = self._clasp.communicate(grounding)
         self.clasp_stderr = solving + self.clasp_stderr
 
         if self._clasp.returncode not in self.clasp_noerror_retval:
-            raise Exception("got error %d from clasp: '%s' gringo: '%s'" % \
-                (self._clasp.returncode, self.clasp_stderr, self.gringo_stderr))
+            error = "got error %d from clasp:\n%s" % (self._clasp.returncode, self.clasp_stderr.decode())
+            try:
+                error += "\n\nFrom gringo:\n%s" % self.gringo_stderr
+            except AttributeError:
+                pass
+            raise EnvironmentError(error)
 
         self._clasp = None
         self._gringo = None
