@@ -50,7 +50,7 @@ class TestGringo4Clasp(unittest.TestCase):
 
 
     def test_constants(self):
-        for const_value in ('1', 'a', '"t"', '23', '"text_with_no_spaces"'):
+        for const_value in ('1', 'a', '"t"', '23', '"text with space"'):
             try:
                 with self.subTest(constant=const_value):
                     self.assert_models(
@@ -67,15 +67,8 @@ class TestGringo4Clasp(unittest.TestCase):
 
 
     def test_constant_with_space(self):
-        """This test shows a problem : a constant with space in its name can't
-        be sent to solver in parameter.
-
-        Once the problem will be fixed, this test will fail,
-        and the constant value ('"text with space"') should be
-        put in the test_constant(2) method with the others constant values.
-
-        """
-        constant = '"text with space"'
+        """This test shows that space is not a valid constant letter"""
+        constant = 'text with space'
         with self.assertRaises(Exception):
             solver = build_solver({'v':constant})
             solver.run([], additionalProgramText='#const v=1. p(v).')
