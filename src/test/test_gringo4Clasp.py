@@ -51,12 +51,20 @@ class TestGringo4Clasp(unittest.TestCase):
 
     def test_constants(self):
         for const_value in ('1', 'a', '"t"', '23', '"text_with_no_spaces"'):
-            with self.subTest(constant=const_value):
+            try:
+                with self.subTest(constant=const_value):
+                    self.assert_models(
+                        '#const v=1. p(v).',
+                        (('p('+const_value+')',),),
+                        constants={'v':const_value},
+                    )
+            except AttributeError:  # subTest is available only since Python 3.4
                 self.assert_models(
                     '#const v=1. p(v).',
                     (('p('+const_value+')',),),
                     constants={'v':const_value},
                 )
+
 
     def test_constant_with_space(self):
         """This test shows a problem : a constant with space in its name can't
