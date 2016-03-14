@@ -328,7 +328,7 @@ class GringoClaspBase(object):
 
             addoptions = []
             if self.gringo_options:
-                addoptions = self.gringo_options.split()
+                addoptions = re.findall(r'(?:[^\s,"]|"(?:\\.|[^"])*")+', self.gringo_options)
 
             commandline = filter_empty_str([self.gringo_bin] + addoptions + programs + additionalPrograms)
             self._gringo = subprocess.Popen(commandline, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
