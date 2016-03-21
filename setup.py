@@ -97,7 +97,7 @@ setup(
     author='Sven Thiele',
     author_email='sthiele78@gmail.com',
 
-    package_dir = { 'pyasp' : 'src'},
+    package_dir = { 'pyasp' : 'pyasp'},
     package_data = {
         'pyasp' : ['bin/*.txt']
     },
