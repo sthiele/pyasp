@@ -482,6 +482,16 @@ class Gringo(GringoClaspBase):
     def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         return self.__ground__(programs, additionalProgramText)
 
+    @staticmethod
+    def version(gringo_bin=root + '/bin/gringo'):
+         gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
+         return gringo
+
+    @staticmethod
+    def version_text(gringo_bin=root + '/bin/gringo'):
+         gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
+         return gringo
+
 class Gringo4Clasp(GringoClaspBase):
     def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
                        gringo_bin = root + '/bin/gringo4', gringo_options = '',
@@ -513,6 +523,17 @@ class Gringo4(Gringo4Clasp):
 
     def run(self, programs, collapseTerms=True, collapseAtoms=True, additionalProgramText=None, callback=None):
         return self.__ground__(programs, additionalProgramText)
+
+    @staticmethod
+    def version(gringo_bin=root + '/bin/gringo4'):
+         gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
+         return gringo
+
+    @staticmethod
+    def version_text(gringo_bin=root + '/bin/gringo4'):
+         gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
+         return gringo
+
 
 class Clasp(GringoClaspBase):
     def __init__(self, clasp_bin = root + '/bin/clasp', clasp_options = '',
@@ -563,3 +584,14 @@ class Clasp(GringoClaspBase):
             accu = []
 
         return accu
+
+
+    @staticmethod
+    def version(clasp_bin=root + '/bin/clasp'):
+         _, clasp = GringoClaspBase.version(gringo_bin=None, clasp_bin=clasp_bin)
+         return clasp
+
+    @staticmethod
+    def version_text(clasp_bin=root + '/bin/clasp'):
+         _, clasp = GringoClaspBase.version_text(gringo_bin=None, clasp_bin=clasp_bin)
+         return clasp
