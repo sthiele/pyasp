@@ -39,4 +39,7 @@ clean:
 
 t: unittest
 unittest:
-	python3 -m unittest discover -v
+	$(PYTHON) -m unittest discover -v
+
+run:
+	$(PYTHON) -m pyasp
