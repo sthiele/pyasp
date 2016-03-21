@@ -257,14 +257,6 @@ class String2TermSet(TermSet):
         atoms = p.parse(s)
         TermSet.__init__(self,atoms)
 
-def exclude_sol(sols,fn=None):
-    if fn:
-        file = open(fn,'w')
-    else:
-        fd, fn = tempfile.mkstemp('.lp')
-        file = os.fdopen(fd,'w')
-    for s in sols:
-        file.write(s.exclude_rule() + '\n')
 
     file.close()
     return fn

@@ -25,6 +25,19 @@ def debug(s):
     print("DBG %03d: %s" % debug_data, file=sys.stderr)
 
 
+def exclude_sol(sols, fn=None):
+    if fn:
+        file = open(fn,'w')
+    else:
+        fd, fn = tempfile.mkstemp('.lp')
+        file = os.fdopen(fd,'w')
+    for s in sols:
+        file.write(s.exclude_rule() + '\n')
+
+    file.close()
+    return fn
+
+
 def quote(s):
     """Return a copy given s with double quotes around it"""
     return '"' + s + '"'
