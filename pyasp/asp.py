@@ -32,8 +32,8 @@ from pyasp.parsing import filter_empty_str, Parser
 
 class GringoClaspBase(object):
     def __init__(self, clasp_bin=BIN_CLASP, clasp_options='',
-                       gringo_bin=BIN_GRINGO, gringo_options='',
-                       optimization=False):
+                 gringo_bin=BIN_GRINGO, gringo_options='',
+                 optimization=False):
         self.clasp_bin = clasp_bin
         self.gringo_bin = gringo_bin
         self.clasp_options = clasp_options
@@ -62,7 +62,7 @@ class GringoClaspBase(object):
 
         return accu
 
-    def __get_witnesses_key__(self,result):
+    def __get_witnesses_key__(self, result):
         key = 'Value'
         if 'Brave' in result['Models']:
             key = 'Brave'
@@ -76,7 +76,7 @@ class GringoClaspBase(object):
             additionalPrograms = []
             if additionalProgramText != None:
                 (fd, fn) = tempfile.mkstemp('.lp')
-                file = os.fdopen(fd,'w')
+                file = os.fdopen(fd, 'w')
                 file.write(str(additionalProgramText))
                 file.close()
                 additionalPrograms.append(fn)
@@ -143,7 +143,7 @@ class GringoClaspBase(object):
 
         solving = self.__solve__(grounding)
 
-        parser = Parser(collapseTerms,collapseAtoms,callback)
+        parser = Parser(collapseTerms, collapseAtoms, callback)
         res = json.loads(solving.decode())
         key = self.__get_witnesses_key__(res)
 
@@ -245,7 +245,7 @@ class Clasp(GringoClaspBase):
             additionalProgramText=None, callback=None):
         solving = self.__solve__(grounded)
 
-        parser = Parser(collapseTerms,collapseAtoms,callback)
+        parser = Parser(collapseTerms, collapseAtoms, callback)
         res = json.loads(solving.decode())
         key = self.__get_witnesses_key__(res)
 

@@ -11,7 +11,7 @@ from .. import asp
 def build_solver(constants={}, gringo_options='', clasp_options=''):
     """Return an asp.Gringo4Clasp object built using parameters values."""
     # build gringo options by adding the constants
-    constants = ' -c '.join(str(k)+'='+str(v) for k,v in constants.items())
+    constants = ' -c '.join(str(k)+'='+str(v) for k, v in constants.items())
     if len(constants) > 0:
         constants = '-c ' + constants
     gringo_options = constants + ' ' + gringo_options

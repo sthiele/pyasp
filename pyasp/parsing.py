@@ -33,20 +33,21 @@ class Lexer:
     t_SPACE = r'[ \t\.]+'
 
     def __init__(self):
-        self.lexer = lex.lex(object=self,optimize=OPTIMIZE, lextab='asp_py_lextab')
+        self.lexer = lex.lex(object=self, optimize=OPTIMIZE, lextab='asp_py_lextab')
 
     def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += t.value.count("\n")
 
     def t_error(self, t):
-        print("Illegal character "+str(t.value[0]))
+        print("Illegal character " + str(t.value[0]))
         t.lexer.skip(1)
+
 
 class Parser:
     start = 'answerset'
 
-    def __init__(self,collapseTerms=True,collapseAtoms=False, callback=None):
+    def __init__(self, collapseTerms=True, collapseAtoms=False, callback=None):
         """
         collapseTerms: function terms in predicate arguments are collapsed into strings
         collapseAtoms: atoms (predicate plus terms) are collapsed into strings
@@ -87,7 +88,7 @@ class Parser:
             if len(t) == 2:
                 t[0] = str(t[1])
             elif len(t) == 5:
-                t[0] = "%s(%s)" % ( t[1], ",".join(map(str,t[3])) )
+                t[0] = "%s(%s)" % ( t[1], ",".join(map(str, t[3])) )
         else:
             if len(t) == 2:
                 t[0] = Term(t[1])
@@ -125,7 +126,8 @@ class Parser:
 
     def p_error(self, t):
         print("Syntax error at "+str(t))
-        print (''.join(map(lambda x: "  %s:%s\n    %s" % (x[1], x[2], x[4][0]),inspect.stack())))
+        print (''.join(map(lambda x: "  %s:%s\n    %s" % (x[1], x[2], x[4][0]),
+                           inspect.stack())))
 
     def parse(self, line):
         self.accu = TermSet()
@@ -138,6 +140,7 @@ class Parser:
             self.callback(self.accu)
 
         return self.accu
+
 
 def filter_empty_str(l):
     return [x for x in l if x != '']

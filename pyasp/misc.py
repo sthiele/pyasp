@@ -27,10 +27,10 @@ def debug(s):
 
 def exclude_sol(sols, fn=None):
     if fn:
-        file = open(fn,'w')
+        file = open(fn, 'w')
     else:
         fd, fn = tempfile.mkstemp('.lp')
-        file = os.fdopen(fd,'w')
+        file = os.fdopen(fd, 'w')
     for s in sols:
         file.write(s.exclude_rule() + '\n')
 

@@ -12,7 +12,7 @@ class TermSet(set):
         super(TermSet, self).__init__([] if terms is None else terms)
         self.score = None
 
-    def filter(self,f):
+    def filter(self, f):
         accu = TermSet()
         for e in self:
             if f(e): accu.add(e)
@@ -25,18 +25,17 @@ class TermSet(set):
 
     def to_file(self, fn=None):
         if fn:
-            file = open(fn,'w')
+            file = open(fn, 'w')
         else:
             fd, fn = tempfile.mkstemp('.lp')
-            file = os.fdopen(fd,'w')
+            file = os.fdopen(fd, 'w')
         for t in self:
-            #print str(t)
             file.write(str(t) + '.\n')
         file.close()
         return fn
 
     def exclude_rule(self):
-        return ':- ' + ','.join(map(str,self)) + '.'
+        return ':- ' + ','.join(map(str, self)) + '.'
 
     @staticmethod
     def from_string(string):
@@ -53,7 +52,7 @@ class String2TermSet(TermSet):
     """A TermSet with a constructor taking a string to be parsed into atoms.
 
     Deprecated, kept for retro-compatibility.
-    Equivalent to TermSet.from_string.
+    Equivalent to TermSet.from_string usage.
 
     """
     def __new__(cls, string):
@@ -80,29 +79,31 @@ class Term:
         return self.predicate
 
     def explode(self):
-      return [ self.pred() ] + self.arguments
+      return [self.pred()] + self.arguments
 
     def __repr__(self):
         if len(self.arguments) == 0:
             return "Term(%s)" % (repr(self.predicate),)
         else:
-            return "Term(%s,[%s])" % (repr(self.predicate),",".join(map(repr,self.arguments)))
+            return "Term(%s,[%s])" % (repr(self.predicate),
+                                      ",".join(map(repr, self.arguments)))
 
     def __str__(self):
         if len(self.arguments) == 0:
             return self.predicate
         else:
-            return self.predicate + "(" + ",".join(map(str,self.arguments)) + ")"
+            return self.predicate + "(" + ",".join(map(str, self.arguments)) + ")"
 
     def __hash__(self):
         return tuple([self.predicate] + self.arguments).__hash__()
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         return self.predicate == other.predicate and self.arguments == other.arguments
 
-    def sip(self,s):
-        """sip = string in predicate"""
-        return (s in self.predicate)
+    def sip(self, string):
+        """sip = string in predicate ; Equivalent to string in self.predicate"""
+        return string in self.predicate
 
-    def p(self,s):
-        return (s == self.predicate)
+    def p(self, string):
+        """Equivalent to self.predicate == string"""
+        return string == self.predicate
