@@ -15,19 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with pyasp.  If not, see <http://www.gnu.org/licenses/>.import random
 
+import inspect
+import locale
 import sys
 
 def quote(s):
+    """Return a copy given s with double quotes around it"""
     return '"' + s + '"'
 
 def unquote(s):
+    """Return copy of s without first and last characters
+    if they are both double quotes"""
     if s[:1] == '"' and s[-1:] == '"':
         return s[1:-1]
     else:
         return s
 
+
 # code taken from http://ginstrom.com/scribbles/2007/09/04/pretty-printing-a-table-in-python/
-import locale
 
 def format_num(num):
     """Format a number according to given places.
