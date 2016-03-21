@@ -62,9 +62,9 @@ class String2TermSet(TermSet):
 class Term:
     """an ASP term (used for atoms and for function terms)"""
 
-    def __init__(self, predicate, arguments=[]):
+    def __init__(self, predicate, arguments=None):
         self.predicate = predicate
-        self.arguments = arguments
+        self.arguments = [] if arguments is None else arguments
 
     def nb_args(self):
         return len(self.arguments)
@@ -95,7 +95,7 @@ class Term:
             return self.predicate + "(" + ",".join(map(str, self.arguments)) + ")"
 
     def __hash__(self):
-        return tuple([self.predicate] + self.arguments).__hash__()
+        return hash(tuple([self.predicate] + self.arguments))
 
     def __eq__(self, other):
         return self.predicate == other.predicate and self.arguments == other.arguments
