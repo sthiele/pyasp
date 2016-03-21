@@ -29,6 +29,7 @@ import errno
 import json
 
 root = __file__.rsplit('/', 1)[0]
+REGEX_VERSION_NUMBER = re.compile('[0-9]+\.[0-9]+\.[0-9]+')
 
 global optimize
 # use 0 for debugging
@@ -314,6 +315,54 @@ class GringoClaspBase(object):
             key = 'Cautious'
 
         return key
+
+    @staticmethod
+    def version_text(gringo_bin=root + '/bin/gringo',
+                     clasp_bin=root + '/bin/clasp'):
+        """Return the version text"""
+        if gringo_bin:
+            try:
+                commandline = filter_empty_str([gringo_bin] + ['--version'])
+                gringo = subprocess.Popen(commandline, stderr=subprocess.PIPE,
+                                          stdout=subprocess.PIPE)
+            except OSError as e:
+                if e.errno == 2:
+                    raise OSError('Grounder \'%s\' not found' % gringo_bin)
+                else:
+                    raise e
+            gringo_version, _ = gringo.communicate()
+            gringo_version = gringo_version.decode('utf-8')
+        else:
+            gringo_version = None
+
+        if clasp_bin:
+            try:
+                clasp = subprocess.Popen(
+                    filter_empty_str([clasp_bin] + ['--version']),
+                    stdin=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE
+                )
+
+            except OSError as e:
+                if e.errno == 2:
+                    raise Exception('Solver \'%s\' not found' % clasp_bin)
+                else:
+                    raise e
+            clasp_version, _ = clasp.communicate()
+            clasp_version = clasp_version.decode('utf-8')
+        else:
+            clasp_version = None
+        return gringo_version, clasp_version
+
+    @staticmethod
+    def version(gringo_bin=root + '/bin/gringo', clasp_bin=root + '/bin/clasp'):
+        """Return the version number as string"""
+        gringo, clasp = GringoClaspBase.version_text(gringo_bin, clasp_bin)
+        return (
+            REGEX_VERSION_NUMBER.search(gringo).group() if gringo else None,
+            REGEX_VERSION_NUMBER.search(clasp).group() if clasp else None,
+        )
 
     def __ground__(self, programs, additionalProgramText):
         try:
