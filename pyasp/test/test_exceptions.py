@@ -11,12 +11,12 @@ class TestGringo4Clasp(unittest.TestCase):
 
     def test_gringo_error(self):
         gringo = asp.Gringo4()
-        with self.assertRaises(OSError):
+        with self.assertRaises(EnvironmentError):
             gringo.run([], additionalProgramText='..')
 
     def test_clasp_error(self):
         clasp = asp.Clasp()
-        with self.assertRaises(OSError):
+        with self.assertRaises(EnvironmentError):
             clasp.run([], additionalProgramText='..')
 
     def test_clasp_error(self):
