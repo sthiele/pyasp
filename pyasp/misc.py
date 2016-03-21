@@ -19,6 +19,12 @@ import inspect
 import locale
 import sys
 
+
+def debug(s):
+    debug_data = (inspect.currentframe().f_back.f_lineno, s)
+    print("DBG %03d: %s" % debug_data, file=sys.stderr)
+
+
 def quote(s):
     """Return a copy given s with double quotes around it"""
     return '"' + s + '"'

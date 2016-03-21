@@ -38,11 +38,6 @@ import sys
 if sys.flags.optimize in ['-O', '-OO'] and optimize == 0:
   raise RuntimeError("need to use optimize=1 and run python without -O or -OO once to make parsers work")
 
-def debug(s):
-  import inspect
-  print("DBG %03d: %s" % \
-    (inspect.currentframe().f_back.f_lineno,s), file=sys.stderr)
-
 
 # mutable and not hashable!
 class TermSet(set):
