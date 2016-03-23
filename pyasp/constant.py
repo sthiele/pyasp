@@ -17,11 +17,15 @@ REL_DIR_BIN       = 'bin/'
 # Packaging: access to the file, inside the package,
 #   independently of the installation directory
 access_packaged_file = partial(pkg_resources.resource_filename, __pkg_name__)
+def access_binary_file(bin_name):
+    """Return path to given binany, assuming it is in the pyasp package
+    and in the REL_DIR_BIN subdirectory."""
+    return access_packaged_file(REL_DIR_BIN + bin_name)
 
 # Access to the binary files
-BIN_GRINGO3  = access_packaged_file(REL_DIR_BIN + 'gringo3')
-BIN_GRINGO4 = access_packaged_file(REL_DIR_BIN + 'gringo4')
-BIN_CLASP   = access_packaged_file(REL_DIR_BIN + 'clasp')
+BIN_GRINGO3 = access_binary_file('gringo3')
+BIN_GRINGO4 = access_binary_file('gringo4')
+BIN_CLASP   = access_binary_file('clasp')
 
 
 # Optimization definition
