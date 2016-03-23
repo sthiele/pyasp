@@ -19,7 +19,7 @@ REL_DIR_BIN       = 'bin/'
 access_packaged_file = partial(pkg_resources.resource_filename, __pkg_name__)
 
 # Access to the binary files
-BIN_GRINGO  = access_packaged_file(REL_DIR_BIN + 'gringo')
+BIN_GRINGO3  = access_packaged_file(REL_DIR_BIN + 'gringo3')
 BIN_GRINGO4 = access_packaged_file(REL_DIR_BIN + 'gringo4')
 BIN_CLASP   = access_packaged_file(REL_DIR_BIN + 'clasp')
 

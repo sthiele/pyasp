@@ -26,13 +26,13 @@ import threading
 import re
 
 from pyasp.term import Term, TermSet
-from pyasp.constant import BIN_GRINGO, BIN_GRINGO4, BIN_CLASP
+from pyasp.constant import BIN_GRINGO3, BIN_GRINGO4, BIN_CLASP
 from pyasp.parsing import filter_empty_str, Parser
 
 
 class GringoClaspBase(object):
     def __init__(self, clasp_bin=BIN_CLASP, clasp_options='',
-                 gringo_bin=BIN_GRINGO, gringo_options='',
+                 gringo_bin=BIN_GRINGO3, gringo_options='',
                  optimization=False):
         self.clasp_bin = clasp_bin
         self.gringo_bin = gringo_bin
@@ -181,7 +181,7 @@ class GringoClasp(GringoClaspBase):
 
 
 class Gringo(GringoClaspBase):
-    def __init__(self, gringo_bin = BIN_GRINGO, gringo_options = ''):
+    def __init__(self, gringo_bin = BIN_GRINGO3, gringo_options = ''):
         self.gringo_bin = gringo_bin
         self.gringo_options = gringo_options
         self._gringo = None
