@@ -17,7 +17,6 @@
 
 # -*- coding: utf-8 -*-
 #from distutils.core import setup
-from __future__ import print_function
 from setuptools import setup
 from setuptools.command.install import install as _install
 import os
@@ -83,9 +82,10 @@ def binaries_urls(platform_name, arch):
     try:
         subpath = BASE_URL_PLATFORM_SPECIFIC_SUBPATHS[platform_name, arch]
     except KeyError:
-        print('ERROR: clasp/gringo3/gringo4 binaries are not available for'
-              ' platform ' + platform_name + ' under architecture '
-              + arch + 'bits.', file=sys.stderr)
+        logging.getLogger().error(
+            'clasp/gringo3/gringo4 binaries are not available for'
+            ' platform ' + platform_name + ' under architecture '
+            + arch + 'bits.')
         return tuple()  # empty iterable
     # no error: build the tuple of binaries paths
     return tuple((local_name, BINARIES_BASE_URL.format(subpath, remote_name))
