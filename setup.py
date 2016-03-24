@@ -18,18 +18,23 @@
 # -*- coding: utf-8 -*-
 #from distutils.core import setup
 from setuptools import setup
+from setuptools.command.install import install as _install
 import os
 import sys
-import platform
-import distutils
 import site
-try:
-  import urllib.request, urllib.parse, urllib.error
-except ImportError:
-  import urllib, urlparse
+import logging
+import platform
 import sysconfig
+import subprocess
 
-from setuptools.command.install import install as _install
+# version specific imports
+if sys.version_info >= (3,):
+    from urllib import request
+    urlretrieve = request.urlretrieve
+else:  # python 2 compatibility
+    # TODO: using requests module (http://docs.python-requests.org/en/latest/index.html)
+    #  is maybe a good idea
+    from urllib import urlretrieve
 
 class install(_install):
     def get_binaries(self, path):
