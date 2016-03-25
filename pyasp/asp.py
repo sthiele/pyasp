@@ -126,10 +126,12 @@ class GringoClaspBase(object):
         self.clasp_stderr = solving + self.clasp_stderr
 
         if self._clasp.returncode not in self.clasp_noerror_retval:
-            error = "got error %d from clasp:\n%s" % (self._clasp.returncode, self.clasp_stderr.decode())
+            error = "got error %d from clasp:\n%s" % (self._clasp.returncode,
+                                                      self.clasp_stderr.decode())
             try:
-                error += "\n\nFrom gringo:\n%s" % self.gringo_stderr
-            except AttributeError:
+                if self.gringo_stderr:
+                    error += "\n\nFrom gringo:\n%s" % self.gringo_stderr
+            except AttributeError:  # no gringo error
                 pass
             raise EnvironmentError(error)
 
