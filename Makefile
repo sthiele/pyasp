@@ -6,6 +6,7 @@ DESTDIR=/
 BUILDIR=$(CURDIR)/debian/bioasp
 PROJECT=bioasp
 VERSION=0.06
+PACKAGE=pyasp
 
 all:
 	@echo "make source - Create source package"
@@ -39,4 +40,10 @@ clean:
 
 t: unittest
 unittest:
-	python3 -m unittest discover -v
+	$(PYTHON) -m unittest discover -v
+
+run:
+	$(PYTHON) -m $(PACKAGE)
+
+pylint:
+	pylint $(PACKAGE) --ignore=CSV,ply
