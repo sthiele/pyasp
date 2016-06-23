@@ -29,7 +29,6 @@ from pyasp.term import Term, TermSet
 from pyasp.constant import BIN_GRINGO3, BIN_GRINGO4, BIN_CLASP
 from pyasp.parsing import filter_empty_str, Parser
 
-root = __file__.rsplit('/', 1)[0]
 
 class GringoClaspBase(object):
     def __init__(self, clasp_bin=BIN_CLASP, clasp_options='',
@@ -73,8 +72,8 @@ class GringoClaspBase(object):
         return key
 
     @staticmethod
-    def version_text(gringo_bin=root + '/bin/gringo',
-                     clasp_bin=root + '/bin/clasp'):
+    def version_text(gringo_bin=BIN_GRINGO3,
+                     clasp_bin=BIN_CLASP):
         """Return the version text"""
         if gringo_bin:
             try:
@@ -95,9 +94,9 @@ class GringoClaspBase(object):
             try:
                 clasp = subprocess.Popen(
                     filter_empty_str([clasp_bin] + ['--version']),
-                    stdin=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    stdout=subprocess.PIPE
+                    stdin = subprocess.PIPE,
+                    stderr = subprocess.PIPE,
+                    stdout = subprocess.PIPE
                 )
 
             except OSError as e:
@@ -112,7 +111,7 @@ class GringoClaspBase(object):
         return gringo_version, clasp_version
 
     @staticmethod
-    def version(gringo_bin=root + '/bin/gringo', clasp_bin=root + '/bin/clasp'):
+    def version(gringo_bin=BIN_GRINGO3, clasp_bin=BIN_CLASP):
         """Return the version number as string"""
         gringo, clasp = GringoClaspBase.version_text(gringo_bin, clasp_bin)
         return (
@@ -161,9 +160,9 @@ class GringoClaspBase(object):
                 opts = opts + ['--outf=2']
             self._clasp = subprocess.Popen(
                 filter_empty_str([self.clasp_bin] + addoptions  + opts),
-                stdin=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                stdout=subprocess.PIPE)
+                stdin = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                stdout = subprocess.PIPE)
 
         except OSError as e:
             if e.errno == 2:
@@ -208,12 +207,12 @@ class GringoClaspBase(object):
 
         elif res['Result'] == "OPTIMUM FOUND":
             if key == 'Value':
-                numopts= res['Models']['Optimal']
-                if numopts==0 :
+                numopts = res['Models']['Optimal']
+                if numopts == 0 :
                     print('WARNING: OPTIMUM FOUND but zero optimals')
-                    witnesses=[]
+                    witnesses = []
                 else :
-                    offset =len(res['Call'][0]['Witnesses'])-numopts
+                    offset = len(res['Call'][0]['Witnesses'])-numopts
                     witnesses = res['Call'][0]['Witnesses'][offset:]
 
             else:
@@ -243,14 +242,14 @@ class Gringo(GringoClaspBase):
         return self.__ground__(programs, additionalProgramText)
 
     @staticmethod
-    def version(gringo_bin=root + '/bin/gringo'):
-         gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
-         return gringo
+    def version(gringo_bin=BIN_GRINGO3):
+        gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
+        return gringo
 
     @staticmethod
-    def version_text(gringo_bin=root + '/bin/gringo'):
-         gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
-         return gringo
+    def version_text(gringo_bin=BIN_GRINGO3):
+        gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
+        return gringo
 
 class Gringo4Clasp(GringoClaspBase):
     def __init__(self, clasp_bin = BIN_CLASP, clasp_options = '',
@@ -286,14 +285,14 @@ class Gringo4(Gringo4Clasp):
         return self.__ground__(programs, additionalProgramText)
 
     @staticmethod
-    def version(gringo_bin=root + '/bin/gringo4'):
-         gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
-         return gringo
+    def version(gringo_bin=BIN_GRINGO4):
+        gringo, _ = GringoClaspBase.version(gringo_bin, clasp_bin=None)
+        return gringo
 
     @staticmethod
-    def version_text(gringo_bin=root + '/bin/gringo4'):
-         gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
-         return gringo
+    def version_text(gringo_bin=BIN_GRINGO4):
+        gringo, _ = GringoClaspBase.version_text(gringo_bin, clasp_bin=None)
+        return gringo
 
 
 class Clasp(GringoClaspBase):
@@ -329,12 +328,12 @@ class Clasp(GringoClaspBase):
 
         elif res['Result'] == "OPTIMUM FOUND":
             if key == 'Value':
-                numopts= res['Models']['Optimal']
-                if numopts==0 :
+                numopts = res['Models']['Optimal']
+                if numopts == 0 :
                     print('WARNING: OPTIMUM FOUND but zero optimals')
-                    witnesses=[]
+                    witnesses = []
                 else :
-                    offset =len(res['Call'][0]['Witnesses'])-numopts
+                    offset = len(res['Call'][0]['Witnesses'])-numopts
                     witnesses = res['Call'][0]['Witnesses'][offset:]
 
             else:
@@ -349,11 +348,11 @@ class Clasp(GringoClaspBase):
 
 
     @staticmethod
-    def version(clasp_bin=root + '/bin/clasp'):
-         _, clasp = GringoClaspBase.version(gringo_bin=None, clasp_bin=clasp_bin)
-         return clasp
+    def version(clasp_bin=BIN_CLASP):
+        _, clasp = GringoClaspBase.version(gringo_bin=None, clasp_bin=clasp_bin)
+        return clasp
 
     @staticmethod
-    def version_text(clasp_bin=root + '/bin/clasp'):
-         _, clasp = GringoClaspBase.version_text(gringo_bin=None, clasp_bin=clasp_bin)
-         return clasp
+    def version_text(clasp_bin=BIN_CLASP):
+        _, clasp = GringoClaspBase.version_text(gringo_bin=None, clasp_bin=clasp_bin)
+        return clasp
