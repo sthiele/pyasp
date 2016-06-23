@@ -257,7 +257,7 @@ class Gringo4Clasp(GringoClaspBase):
                        optimization = False):
         self.clasp_bin = clasp_bin
         self.gringo_bin = gringo_bin
-        ssss.clasp_options = clasp_options
+        self.clasp_options = clasp_options
         self.gringo_options = gringo_options
         self._clasp = None
         self._gringo = None
