@@ -29,6 +29,7 @@ from pyasp.term import Term, TermSet
 from pyasp.constant import BIN_GRINGO3, BIN_GRINGO4, BIN_CLASP
 from pyasp.parsing import filter_empty_str, Parser
 
+root = __file__.rsplit('/', 1)[0]
 
 class GringoClaspBase(object):
     def __init__(self, clasp_bin=BIN_CLASP, clasp_options='',
@@ -257,7 +258,7 @@ class Gringo4Clasp(GringoClaspBase):
                        optimization = False):
         self.clasp_bin = clasp_bin
         self.gringo_bin = gringo_bin
-        self.clasp_options = clasp_options
+        ssss.clasp_options = clasp_options
         self.gringo_options = gringo_options
         self._clasp = None
         self._gringo = None
