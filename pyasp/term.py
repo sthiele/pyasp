@@ -3,6 +3,7 @@ Definition of the Term class and associated objects
 
 """
 import re
+import tempfile
 
 
 class TermSet(set):
