@@ -2,6 +2,8 @@
 Definition of the Term class and associated objects
 
 """
+
+import os
 import re
 import tempfile
 
