@@ -41,7 +41,7 @@ from pyasp import constant
 from pyasp import info
 
 
-BINARIES_BASE_URL = 'http://www.cs.uni-potsdam.de/~sthiele/bioasp/downloads/bin/{}/{}'
+BINARIES_BASE_URL = 'http://sthiele.github.io/bin/{}/{}'
 BINARIES_NAME = {
     # binary remote name: binary local name
     'clasp-3.1.3': 'clasp',
