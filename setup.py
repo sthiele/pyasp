@@ -44,7 +44,7 @@ from pyasp import info
 BINARIES_BASE_URL = 'https://github.com/sthiele/pyasp/releases/download/v1.4.4/{}-{}'
 BINARIES_NAME = {
     # binary remote name: binary local name
-    'clasp-3.3.4': 'clasp',
+    'clasp-3.1.1': 'clasp',
     'gringo-3.0.5': 'gringo3',
     'gringo-5.3.0': 'gringo4',
 }
