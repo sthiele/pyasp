@@ -1,1 +1,1 @@
-include src/bin/*.txt
+include pyasp/bin/*.txt
