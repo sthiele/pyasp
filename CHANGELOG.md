@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+## v1.4.4 - 2019, Feb 28
+### Changed
+- The previous host for the gringo/clasp binaries no longer works.
+  We changed the download path again to the assets of the github release. Older versions won't install properly.
 
 ## v1.4.3 - 2017, Mar 29
 ### Changed
