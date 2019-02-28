@@ -44,19 +44,15 @@ from pyasp import info
 BINARIES_BASE_URL = 'https://github.com/sthiele/pyasp/releases/download/v1.4.4/{}-{}'
 BINARIES_NAME = {
     # binary remote name: binary local name
-    'clasp-3.1.3': 'clasp',
+    'clasp-3.1.1': 'clasp',
     'gringo-3.0.5': 'gringo3',
-    'gringo-4.5.3': 'gringo4',
+    'gringo-4.4.0': 'gringo4',
 }
 
 BASE_URL_PLATFORM_SPECIFIC_SUBPATHS = {
     # (platform, architecture) : path to binaries from BINARIES_BASE_URL
     ('linux', '32'): 'linux-32',
     ('linux', '64'): 'linux-64',
-    ('win32', '32'): 'windows-32',
-    ('win32', '64'): 'windows-64',
-    ('cygwin', '32'): 'windows-32',
-    ('cygwin', '64'): 'windows-64',
     ('darwin', '64'): 'macos',  # darwin 32 bits is not supported
 }
 
