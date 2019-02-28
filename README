@@ -6,7 +6,7 @@ Installation
 
 You can install pyasp by running::
 
-	$ pip install --user pyasp
+	$ pip3 install --user pyasp
 	
 	
 Tutorial
