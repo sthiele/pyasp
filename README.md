@@ -16,7 +16,7 @@ You can install pyasp by running:
 
 # Tutorial
 
-A tiny tutorial explaining the basics on how to use the library can be found [here](https://sthiele.github.io/posts/2015/october/pyasp_intro.html).
+A tiny tutorial explaining the basics on how to use the library can be found [here](https://sthiele.github.io/pyasp-basics/).
 
 
 # License
