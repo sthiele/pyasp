@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
-## v1.4.4 - 2019, Feb 28
+## v1.4.4 - 2019, March 1
 ### Changed
 - The previous host for the gringo/clasp binaries no longer works.
   We changed the download path again to the assets of the github release. Older versions won't install properly.
@@ -24,11 +24,11 @@ All notable changes to this project will be documented in this file.
 ### Added,
 - Include gringo4 available via the class Gringo4Clasp,
   supporting the new gringo4 syntax.
-  
+
 ## v1.4.0 - 2014, Nov 11
 ### Changed
 - port to python 3
- 
+
 ## v1.3.3 -	2014, May 21
 ### Changed
 - switch to use clasp version 3.0.5
@@ -42,13 +42,13 @@ All notable changes to this project will be documented in this file.
 ### Removed
 - removed number of models argument from run method of GringoClasp
   The number of models can now be determined like a regular clasp option
-  
+
 ## Undocumented versions
 - 1.3.0
 - 1.3
 - 1.2.1
 - 1.2
 - 1.1.7
-- 1.1.6dev 	
-- 1.1dev 	
+- 1.1.6dev
+- 1.1dev
 - 1.0dev

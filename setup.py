@@ -148,7 +148,8 @@ setup(
     url='http://pypi.python.org/pypi/pyasp/',
     license='GPLv3+',
     description='A convenience wrapper for the ASP tools gringo, gringo4 and clasp.',
-    long_description=open('README').read(),
+    long_description=open('README.md').read(),
+    long_description_content_type="text/markdown",
     author='Sven Thiele',
     author_email='sthiele78@gmail.com',
     zip_safe=False,  # not zippable because of the binary retrieving

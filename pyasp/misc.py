@@ -17,7 +17,9 @@
 
 import inspect
 import locale
+import os
 import sys
+import tempfile
 
 
 def debug(s):
